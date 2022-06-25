@@ -4,7 +4,7 @@ Trabalho de conclusão de curso - Visualização de Relatórios
 
 Criado inicialmente para avaliar a qualidade do ensino médio no Brasil, o Exame Nacional do Ensino Médio (ENEM), constitui a principal forma de acesso à educação superior de mais de 500 universidades públicas e privadas do país. A análise dos microdados, disponibilizados pelo Instituto de Estudos e Pesquisas Educacionais Anísio Teixeira, é importante para os gestores públicos como indicador do ensino nas escolas.
 
-Embora os resultados do exame sejam disponibilizados para estudo e análise de pesquisadores, inexistem ferramentas gratuitas que permitem a visualização dos dados do exame ao público em geral. A análise exige recursos de programação e computacionais para a importação, arrumação, transformação e visualização das informações. 
+Embora os resultados do exame sejam disponibilizados para estudo de pesquisadores, inexistem ferramentas gratuitas que permitem a visualização dos dados do exame ao público em geral. A análise exige recursos de programação e computacionais para a importação, arrumação, transformação e visualização das informações. 
 
 Este projeto tem como propósito elaborar um relatório em html com o resultado do desempenho dos alunos de um município brasileiro, de forma reprodutível, ou seja, gerando relatórios diversos a depender do nome do município fornecido no próprio documento antes da renderização.
 
