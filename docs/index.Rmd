@@ -13,6 +13,9 @@ output:
     smooth_scroll: no
     collapsed: yes
     
+params:
+    cidade: "Curitiba"
+    estado: "PR"
     
 ---
 
@@ -28,78 +31,87 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Introdução
+## Contextualização
 
 <br>
 
 <div align=justify style="text-indent: 3em;">
-Criada inicialmente para avaliar a qualidade do ensino no Brasil, o Exame Nacional do Ensino Médio não só constitui a principal forma de acesso à educação superior de mais de 500 universidades públicas e privadas do pais, como também serve de base para formulação de políticas públicas para a educação. Ele pode ser usado pelo Estado como indicador de qualidade do ensino nas escolas públicas e privadas.
+Criado inicialmente para avaliar a qualidade do ensino no Brasil, o Exame Nacional do Ensino Médio não só constitui a principal forma de acesso à educação superior de mais de 500 universidades públicas e privadas do pais, como também serve de base para formulação de políticas públicas para a educação. Ele pode ser usado pelo Estado como indicador de qualidade do ensino nas escolas públicas e privadas.
 
-Os dados históricos do ENEM, disponibilizados pelo Instituto de Estudos e Pesquisas Educacionais Anísio Teixeira tem sido objeto de diversos estudos em que técnicas de análise são aplicadas por meio de linguagens de programação como Python, R, Java, entre outras.
+Os dados históricos do ENEM, disponibilizados pelo Instituto de Estudos e Pesquisas Educacionais Anísio Teixeira, tem sido objeto de diversos estudos em que técnicas de análise são aplicadas por meio de linguagens de programação como Python, R, Java, entre outras.
 
 Entretanto, embora os dados estejam disponíveis à sociedade na forma de microdados, não existem ferramentas gratuitas que permitam ao cidadão ter acesso às informações geradas a partir destes dados.
 
 
-Este trabalho tem o objetivo de apresentar um relatório com as informações de desempenho dos alunos de um município paranaense, cujo nome da cidade  é fornecido como termos indexado/palavra-chave na seção "Municipio", permitindo assim a reprodutibilidade deste relatório.
-
+Este projeto tem como propósito elaborar um relatório em html com o resultado do desempenho dos alunos de um município brasileiro, de forma reprodutível, ou seja, gerando relatórios diversos a depender do nome do município fornecido no próprio documento antes da renderização.
 <br>
 
 </div>
 
 ```{r inclusão de figura}
 #| fig.align = "center",
-#| out.width = "50%",
+#| out.width = "40%",
 #| echo = FALSE
 
 
 knitr::include_graphics("../data-raw/mona.png")
 
 ```
+<br>
+
+## Metodologia
+
+<div align=justify style="text-indent: 3em;">
+Trabalhei com os dados disponíveis no site do [Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira](https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem) dos anos 2018, 2019 e 2020 (acesso em 20/05/2022).
+
+Os arquivos possuem as seguintes especificações: 2018 com 5513.733 linhas (2,6 GB), 2019 com 5.095.171 linhas( 2,4 GB) e 2020 com 5.783.109 linhas (2GB).
+
+Em função dos tamanhos dos arquivos, utilizei apenas os dados do estado do Paraná e seus municípios.
+
+</div>
 
 <br>
 
-## Município
 
 <br>
 
-```{r Dados do municipio}
-estado = "PR"
-municipio = "Curitiba"
+## Relatório - Município de `r params$cidade`/ `r params$estado`.
+
+<br>
 
 
-```
 
 ```{r Lista dos estados da federacao}
 #| echo = FALSE
 
 estado_federacao <- dplyr::case_when(
-    estado == "AC" ~ "Acre",
-    estado == "AL" ~ "Alagoas",
-    estado == "AP" ~ "Amapá",
-    estado == "AM" ~ "Amazonas", 
-    estado == "BA" ~ "Bahia", 
-    estado == "CE" ~ "Ceará", 
-    estado == "DF" ~ "Distrito Federal", 
-    estado == "ES" ~ "Espírito Santo", 
-    estado == "GO" ~ "Goiás",
-    estado == "MA" ~ "Maranhão", 
-    estado == "MT" ~ "Mato Grosso",
-    estado == "MS" ~ "Mato Grosso do Sul",
-    estado == "MG" ~ "Minas Gerais", 
-    estado == "PA" ~ "Pará", 
-    estado == "PB" ~ "Paraíba", 
-    estado == "PR" ~ "Paraná",
-    estado == "PE" ~ "Pernambuco", 
-    estado == "PI" ~ "Piauí", 
-    estado == "RJ" ~ "Rio de Janeiro", 
-    estado == "RN" ~ "Rio Grande do Norte",
-    estado == "RS" ~ "Rio Grande do Sul", 
-    estado == "RO" ~ "Rondônia", 
-    estado == "RR" ~ "Roraima", 
-    estado == "SC" ~ "Santa Catarina",
-    estado == "SP" ~ "São Paulo",
-    estado == "SE" ~ "Sergipe",
-    estado == "TO" ~ "Tocantins"
+    params$estado == "AC" ~ "Acre",
+    params$estado == "AL" ~ "Alagoas",
+    params$estado == "AP" ~ "Amapá",
+    params$estado == "AM" ~ "Amazonas", 
+    params$estado == "BA" ~ "Bahia", 
+    params$estado == "CE" ~ "Ceará", 
+    params$estado == "DF" ~ "Distrito Federal", 
+    params$estado == "ES" ~ "Espírito Santo", 
+    params$estado == "GO" ~ "Goiás",
+    params$estado == "MA" ~ "Maranhão", 
+    params$estado == "MT" ~ "Mato Grosso",
+    params$estado == "MS" ~ "Mato Grosso do Sul",
+    params$estado == "MG" ~ "Minas Gerais", 
+    params$estado == "PA" ~ "Pará", 
+    params$estado == "PB" ~ "Paraíba", 
+    params$estado == "PR" ~ "Paraná",
+    params$estado == "PE" ~ "Pernambuco", 
+    params$estado == "PI" ~ "Piauí", 
+    params$estado == "RJ" ~ "Rio de Janeiro", 
+    params$estado == "RN" ~ "Rio Grande do Norte",
+    params$estado == "RS" ~ "Rio Grande do Sul", 
+    params$estado == "RO" ~ "Rondônia", 
+    params$estado == "RR" ~ "Roraima", 
+    params$estado == "SC" ~ "Santa Catarina",
+    params$estado == "SP" ~ "São Paulo",
+    params$estado == "SE" ~ "Sergipe",
+    params$estado == "TO" ~ "Tocantins"
 )
 
 ```
@@ -110,20 +122,13 @@ estado_federacao <- dplyr::case_when(
 enem <- readr:: read_csv("../data/enem_analise_final.csv")
 
 ```
-
-
-
-<div align=justify style="text-indent: 3em;">
-Dados de desempenho dos alunos do município de `r municipio` / `r estado_federacao`.
-
-</div>
-
 <br>
 
 ## Desempenho na Redação
 
 <br>
 
+<div align=justify style="text-indent: 3em;">
 A nota da redação é composta por cinco competências com notas que variam de 0 a 200 pontos. A soma das competências resulta na nota final da redação do aluno.
 
 São as seguintecompets competências:
@@ -141,7 +146,7 @@ São as seguintecompets competências:
 
 # Cálculo das médias dos componentes da redação
 medias_comp_redacao <- enem |>
-  dplyr::filter(nu_ano == 2018, no_municipio_prova == municipio) |>
+  dplyr::filter(nu_ano == 2018, no_municipio_prova == params$cidade) |>
   dplyr::summarise(dplyr::across(
     .cols = dplyr::starts_with("nu_nota_comp"),
     .fns = mean, na.rm = TRUE
@@ -256,6 +261,8 @@ p1 <- medias_comp_redacao |>                                            # base
 p1
 
 ```
+</div>
+
 
 ```{r competencias da redacao com maior e menor média}
 
@@ -266,25 +273,25 @@ comp_min <- medias_comp_redacao |>
     dplyr::slice_min(order_by = medias)
 
 melhor_componente_redacao <- dplyr::case_when(
-    comp1 == comp_max ~ "componente um",
-    comp2 == comp_max ~ "componente dois",
-    comp3 == comp_max ~ "componente três",
-    comp4 == comp_max ~ "componente quatro",
-    comp5 == comp_max ~ "componente cinco"
+    medias_comp_redacao[["medias"]][1] == comp_max ~ "componente um",
+    medias_comp_redacao[["medias"]][2] == comp_max ~ "componente dois",
+    medias_comp_redacao[["medias"]][3] == comp_max ~ "componente três",
+    medias_comp_redacao[["medias"]][4] == comp_max ~ "componente quatro",
+    medias_comp_redacao[["medias"]][5] == comp_max ~ "componente cinco"
 )
 
 
 pior_componente_redacao <- dplyr::case_when(
-    comp1 == comp_min ~ "componente um",
-    comp2 == comp_min ~ "componente dois",
-    comp3 == comp_min ~ "componente três",
-    comp4 == comp_min ~ "componente quatro",
-    comp5 == comp_min ~ "componente cinco"
+    medias_comp_redacao[["medias"]][1] == comp_min ~ "componente um",
+    medias_comp_redacao[["medias"]][2] == comp_min ~ "componente dois",
+    medias_comp_redacao[["medias"]][3] == comp_min ~ "componente três",
+    medias_comp_redacao[["medias"]][4] == comp_min ~ "componente quatro",
+    medias_comp_redacao[["medias"]][5] == comp_min ~ "componente cinco"
     )
 
 ```
 
 <div align=justify style="text-indent: 3em;">
-Os alunos da cidade de `r municipio` obtiveram o melhor desempenho no `r melhor_componente_redacao` com média de 
+Os alunos da cidade de `r params$cidade` obtiveram o melhor desempenho no `r melhor_componente_redacao` com média de 
 
 </div>
