@@ -18,6 +18,40 @@ enem_cidade <- enem |>
 
 
 # ANO DE 2020
+
+# ANÁLISE DAS NOTAS DAS REDAÇÕES
+
+p1 <- enem_cidade |>
+  dplyr::select(nu_nota_redacao) |>
+  ggplot2::ggplot(ggplot2::aes(x = nu_nota_redacao))+
+  ggplot2::geom_boxplot()+
+  ggplot2::labs(
+    x = "",
+    y = ""
+  )+
+  ggplot2::theme_classic()+
+  theme_enem()
+
+p1
+
+p2 <- enem_cidade |>
+  dplyr::select(nu_nota_redacao) |>
+  ggplot2::ggplot(ggplot2::aes(x = nu_nota_redacao))+
+  ggplot2::geom_histogram()+
+  ggplot2::labs(
+    x = "notas",
+    y = ""
+  )+
+  ggplot2::theme_classic()+
+  theme_enem()
+
+p2
+
+library(patchwork)
+
+p1/p2
+
+
 # ANÁLISE DAS 5 COMPETÊNCIAS DA REDAÇÃO DO ENEM -----------------------------------------------
 
 # A nota da redação do ENEM é composta por 5 competências. Cada competência pode receceber

@@ -1,5 +1,6 @@
 ---
 title: "Relatório de desempenho dos alunos no Exame Nacional de Ensino Médio (ENEM)"
+Autor: "Marcio Vakassugui"
 output: 
   html_document:
     highlight: breezedark
@@ -11,7 +12,7 @@ output:
     smooth_scroll: no
     collapsed: yes
 params:
-    cidade: "Santa Helena"
+    cidade: "Curitiba"
     estado: "PR"
 css: custom.css
 ---
@@ -33,6 +34,7 @@ knitr::opts_chunk$set(
 enem <- readr:: read_csv("../data/enem_analise_final.csv")
 
 ```
+
 ```{r base de dados para cidade e ano escolhidos}
 #| echo = FALSE
 
@@ -41,6 +43,13 @@ enem_cidade <- enem |>
 
 ```
 
+<br>
+
+# Objetivo
+
+Elaborar um modelo de relatório em HTML, produzido em RMarkdown, que apresente o desempenho dos alunos na prova do Exame Nacional do Ensino Médio (ENEM) por município. 
+
+O modelo deve ter a característica de reprodutibilidade, de modo que relatórios (formato, textos e visualizações) sejam produzidos por meio de uma rotina de procedimentos (script) automatizadamente para todos os municípios do estado do Parana, nos quais as provas foram realizadas.
 
 
 ```{r total de alunos}
@@ -56,8 +65,8 @@ total_alunos_municipio <- enem_cidade |>
 
 | Município: `r params$cidade` |                                  Estado: `r params$estado` |
 |:-----------------------------|-----------------------------------------------------------:|
-| Autor: Marcio Vakassugui     |                                       Data: `r Sys.Date()` |
-|                              | Total de alunos: `r total_alunos_municipio`                |
+| Total de alunos: `r total_alunos_municipio`  |                       Data: `r Sys.Date()` |
+
 
 <br>
 
@@ -97,7 +106,133 @@ estado_federacao <- dplyr::case_when(
 
 # Informações sobre a prova de redação
 
+```{r notas máximas, quantidade de zeros, média e percentual de zeros no município}
+#| echo = FALSE
+
+nota_max <- enem_cidade |>
+    dplyr::summarize(nota_max = max(nu_nota_redacao))
+
+nota_min <- enem_cidade |>
+    dplyr::summarise(nota_min = min(nu_nota_redacao))
+
+nota_media <- enem_cidade |>
+    dplyr::summarise(nota_media = mean(nu_nota_redacao, na.rm = TRUE))
+
+zeros_redacao <- enem |>
+    dplyr::filter(no_municipio_prova == params$cidade & nu_nota_redacao == 0 & nu_ano == 2020) |>
+    dplyr:: summarise(qtde_zeros = dplyr::n())
+
+perc_zeros_redacao <- enem_cidade |>
+    dplyr::summarise(perc_zeros_redacao = round((zeros_redacao / total_alunos_municipio)*100,3))
+
+```
+
+```{r base para grafico freq_relativa notas por intervalo de classes}
+#| echo = FALSE
+
+fabs_notas_redacao <- enem_cidade |>
+  dplyr::select(nu_nota_redacao) |>
+  table()
+
+# total de alunos com nota máxima
+
+qtd_nota_max <- fabs_notas_redacao |>
+  tail(n=1) 
+
+# criar as classes de frequências das notas
+
+intervalo_classes_notas <- seq(0, 1000, 100)
+tab_classes_notas <- table(cut(enem_cidade$nu_nota_redacao,
+                               breaks = intervalo_classes_notas,
+                               right = FALSE)) |>
+  prop.table() |>
+  data.frame() |>
+  dplyr::mutate(Freq = Freq*100)
+
+```
+
 <br>
+
+
+### Notas das redações
+
+```{r grafico notas das redacões}
+
+source("../R/funcao_tema_graficos.R")
+
+p1 <- enem_cidade |> 
+  dplyr::select(nu_nota_redacao) |> 
+  ggplot2::ggplot(ggplot2::aes(x = nu_nota_redacao))+
+  ggplot2::geom_boxplot()+
+  ggplot2::labs(
+    x = "",
+    y = ""
+  )+
+  ggplot2::theme_classic()+
+  theme_enem()
+  
+p2 <- enem_cidade |> 
+  dplyr::select(nu_nota_redacao) |> 
+  ggplot2::ggplot(ggplot2::aes(x = nu_nota_redacao))+
+  ggplot2::geom_histogram(fill = "#576BC7",
+                          color = "#000000")+
+  ggplot2::labs(
+    x = "notas",
+    y = ""
+  )+
+  ggplot2::theme_classic()+
+  theme_enem()
+
+library(patchwork)
+
+p1/p2
+
+```
+
+<br>
+
+Entre os alunos que realizaram o exame na cidade de **`r params$cidade`**, a maior nota **`r nota_max`** foi conquistada por `r qtd_nota_max` aluno(s). Entretanto, **`r zeros_redacao`** participante(s), entre os **`r total_alunos_municipio`** aluno(s), obtiveram nota zero , o que representa um percentual de **`r perc_zeros_redacao`%**.
+A nota média foi de **`r round(nota_media,3)`**.
+
+<br>
+
+### Distribuição das notas das redações por intervalo de classes.
+
+```{r gráfico freq_relativa notas por intervalo de classes}
+
+p3 <- tab_classes_notas |>
+  ggplot2::ggplot()+
+  ggplot2::aes(x= Var1,
+               y = Freq,
+               label = round(Freq, 3))+
+  ggplot2::geom_col(fill = "#576BC7",
+                    color = "#000000") +
+  ggplot2::geom_label(                                                                 # labels
+    size = 5,
+    color = "#576BC7",
+    alpha = 0,
+    nudge_y = 1.5
+  ) +
+  ggplot2::labs(                                                            # títulos dos eixos
+    title = "Frequências relativas de notas por intervalos de classe",
+    x = "Intervalo de notas",
+    y = "Frequência (%)"
+  )+
+  ggplot2::theme_classic()+
+  theme_enem()
+
+p3
+
+
+
+```
+
+<br>
+
+### Notas médias das competências
+
+<br> 
+
 
 A nota da redação é composta por cinco competências com notas que variam de 0 a 200 pontos. A soma das seguintes competências resulta na nota final da redação do aluno.
 
@@ -156,7 +291,6 @@ medias_comp_redacao <- medias_comp_redacao |>
 
 ```{r plot1 - Media dos componentes da redacao}
 
-source("../R/funcao_tema_graficos.R")
 
 # Cosntruir o gráfico de barras das médias dos componentes que compõem a nota da redação
 p1 <- medias_comp_redacao |>                                                             # base
@@ -174,7 +308,8 @@ p1 <- medias_comp_redacao |>                                                    
     label = round(medias, 2)
   ) +
   ggplot2::geom_col(
-    fill = "#576BC7"
+    fill = "#576BC7",
+    color = "#000000"
   ) +
   ggplot2::geom_label(                                                                 # labels
     size = 5,
@@ -242,57 +377,8 @@ pior_competencia <- dplyr::case_when(
 
 ```
 
-Os alunos que realizaram o exame na cidade de **`r params$cidade`** obtiveram o melhor desempenho na `r melhor_componente_redacao[2]` da redação, `r melhor_competencia`, com a média de **`r round(medias_comp_redacao[["medias"]][1],2)`** e o pior desempenho na `r pior_componente_redacao[2]`, `r pior_competencia`, com a média de **`r round(medias_comp_redacao[["medias"]][5],2)`**.
+Os alunos obtiveram o melhor desempenho na `r melhor_componente_redacao[2]` da redação, `r melhor_competencia`, com a média de **`r round(medias_comp_redacao[["medias"]][1],2)`** e o pior desempenho na `r pior_componente_redacao[2]`, `r pior_competencia`, com a média de **`r round(medias_comp_redacao[["medias"]][5],2)`**.
 
-```{r notas máximas, quantidade de zeros, média e percentual de zeros no município}
-#| echo = FALSE
-
-nota_max <- enem_cidade |>
-    dplyr::summarize(nota_max = max(nu_nota_redacao))
-
-nota_min <- enem_cidade |>
-    dplyr::summarise(nota_min = min(nu_nota_redacao))
-
-nota_media <- enem_cidade |>
-    dplyr::summarise(nota_media = mean(nu_nota_redacao, na.rm = TRUE))
-
-zeros_redacao <- enem |>
-    dplyr::filter(no_municipio_prova == params$cidade & nu_nota_redacao == 0 & nu_ano == 2020) |>
-    dplyr:: summarise(qtde_zeros = dplyr::n())
-
-perc_zeros_redacao <- enem_cidade |>
-    dplyr::summarise(perc_zeros_redacao = round((zeros_redacao / total_alunos_municipio)*100,3))
-
-```
-
-```{r base para grafico freq_relativa notas por intervalo de classes}
-#| echo = FALSE
-
-fabs_notas_redacao <- enem_cidade |>
-  dplyr::select(nu_nota_redacao) |>
-  table()
-
-# total de alunos com nota máxima
-
-qtd_nota_max <- fabs_notas_redacao |>
-  tail(n=1) 
-
-# criar as classes de frequências das notas
-
-intervalo_classes_notas <- seq(0, 1000, 100)
-tab_classes_notas <- table(cut(enem_cidade$nu_nota_redacao,
-                               breaks = intervalo_classes_notas,
-                               right = FALSE)) |>
-  prop.table() |>
-  data.frame() |>
-  dplyr::mutate(Freq = Freq*100)
-
-```
-
-
-A nota máxima **`r nota_max`** foi obtida por `r qtd_nota_max` aluno(s) e a nota média foi de **`r round(nota_media,3)`**. Um total de **`r zeros_redacao`** participante(s) entre os **`r total_alunos_municipio`** alunos obtiveram nota zero , o que representa um percentual de **`r perc_zeros_redacao`%**.
-
-<br>
 
 ### Distribuição das notas por competências
 
@@ -345,31 +431,6 @@ p2
 
 No gráfico acima, pode-se observar a densidade de distribuição das notas por competências exigidas na redação e as médias já apresentadas no gráfico 01. Os locais de maior área em torno dos boxplots representam maiores concentrações de dados, enquanto que locais de menor área indicam baixa concentração de dados.
 
-```{r gráfico freq_relativa notas por intervalo de classes}
+<br>
 
-p3 <- tab_classes_notas |>
-  ggplot2::ggplot()+
-  ggplot2::aes(x= Var1,
-               y = Freq,
-               label = round(Freq, 3))+
-  ggplot2::geom_col(fill = "#576BC7") +
-  ggplot2::geom_label(                                                                 # labels
-    size = 5,
-    color = "#576BC7",
-    alpha = 0,
-    nudge_y = 1.5
-  ) +
-  ggplot2::labs(                                                            # títulos dos eixos
-    title = "Frequências relativas de notas por intervalos de classe",
-    x = "Intervalo de notas",
-    y = "Frequência (%)"
-  )+
-  ggplot2::theme_classic()+
-  theme_enem()
-
-p3
-
-
-
-```
 
