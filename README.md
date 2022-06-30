@@ -8,7 +8,7 @@ Embora os resultados do exame sejam disponibilizados para estudo de pesquisadore
 
 Este projeto tem como propósito elaborar um relatório em html com o resultado do desempenho dos alunos de um município brasileiro, de forma reprodutível, ou seja, gerando relatórios diversos a depender do nome do município fornecido no próprio documento antes da renderização.
 
-Trabalhei com os dados disponíveis no site do INEP no momento (acesso realizado em 06/06/2022). Portanto, com os resultados de 2018, 2019 e 2020.
+Trabalhei com os dados disponíveis no site do INEP (acesso realizado em 06/06/2022). Portanto, com os resultados de 2018, 2019 e 2020.
 
 Em função dos tamanhos dos arquivos (2018 com 2,6 GB, 2019 com 2,4 GB e 2020 com 2 GB), utilizei apenas os dados do estado do Paraná e seus municípios.
 
