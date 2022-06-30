@@ -1,49 +1,25 @@
-#------------------------------------------------------------------------------------------------------------#
+#---------------------------------------------------------------------------------------------#
 #                                        Análise da base ENEM
 #                                    Curso- R - Visualização II
 #                                     Professora: Beatriz Milz
 #                                     Aluno: Marcio Vakassugui
-#------------------------------------------------------------------------------------------------------------#
+#---------------------------------------------------------------------------------------------#
 
-
-# CARREGA AS FUNÇÕES DA PASTA R -------------------------------------------------------------------------
-
-source("R/funcao_importacao_dados.R")
-source("R/funcao_preparacao_bases.R")
 
 uf <- "PR"
 
-# IMPORTAÇÃO DA BASE DE DADOS <2018><PR> ----------------------------------------------------------------
-importa_microdados(2018)
+# ABRIR AS BASES UNINDO EM UA ÚNIOA TIBBLE ------------------------------------------------------
+arquivos <- fs::dir_ls(path = "data", glob = "*PR.csv$")   # vetor c/ caminhos dos arquivos .rds
+enem <- purrr::map_dfr(arquivos, readr::read_csv)    # dF c/ três arquivos NA estrutura de dados
 
-# PREPARACAO DA BASE <2018> <PR> ------------------------------------------------------------------------
-preparacao_base(2018, uf)
-
-# IMPORTAÇÃO DA BASE DE DADOS <2019><PR> ----------------------------------------------------------------
-importa_microdados(2019)
-
-# PREPARACAO DA BASE <2018> <PR> ------------------------------------------------------------------------
-preparacao_base(2019, uf)
-
-# IMPORTAÇÃO DA BASE DE DADOS <2020><PR> ----------------------------------------------------------------
-importa_microdados(2020)
-
-# PREPARACAO DA BASE <2018> <PR> ------------------------------------------------------------------------
-preparacao_base(2020, uf)
-
-
-# ABRIR AS BASES UNINDO EM UMA ÚNICA TIBBLE -------------------------------------------------------------
-arquivos <- fs::dir_ls(path = "data", glob = "*PR.csv$")              # vetor com os caminhos dos arquivos .rds.
-enem <- purrr::map_dfr(arquivos, readr::read_csv)      # dataframe c/ três arquivos em uma estrutura de dados.
-
-# SALVA O ARQUIVO COM A BASE PREPARADA ------------------------------------------------------------------
+# SALVA O ARQUIVO COM A BASE PREPARADA ----------------------------------------------------------
 readr::write_csv(enem, "data/enem_analise.csv")
 
-# CARREGAR A BASE GERADA --------------------------------------------------------------------------------
-enem <- readr::read_csv("data/enem_analise_final.csv")
+# CARREGAR A BASE GERADA ------------------------------------------------------------------------
+enem <- readr::read_csv("data/enem_analise.csv")
 
 
-# ARRUMAÇÃO DA VARIÁVEL CIDADE (NOMES COM PROBLEMAS - ACENTUAÇÃO) ---------------------------------------
+# ARRUMAÇÃO DA VARIÁVEL CIDADE (NOMES COM PROBLEMAS - ACENTUAÇÃO) -------------------------------
 # á     ---> <e1>
 # â     ---> <e2>
 # ã     ---> <e3>
@@ -137,13 +113,13 @@ enem_novo <- enem_novo |>
     ))
 
 
-# ARRUMAÇÃO DA VARIÁVEL NU_NOTA_COMP1  ------------------------------------------------------------------
+# ARRUMAÇÃO DA VARIÁVEL NU_NOTA_COMP1  ----------------------------------------------------------
 
 #Mudança do tipo de chr para dbl
 enem[["nu_nota_comp1"]] <- as.double(enem[["nu_nota_comp1"]])
 
 
 
-# SALVAR A BASE PREPARADA PARA O SCRIPT ANALISE ---------------------------------------------------------
+# SALVAR A BASE PREPARADA PARA O SCRIPT ANALISE -------------------------------------------------
 
 readr::write_csv(enem_novo, "data/enem_analise_final.csv")
