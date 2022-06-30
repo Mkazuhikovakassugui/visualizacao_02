@@ -1,7 +1,5 @@
 ---
-title: "Reprodutibilidade dos Resultados Enem"
-author: "Marcio Vakassugui"
-date: "`r Sys.Date()`"
+title: "Relatório de desempenho dos alunos no Exame Nacional de Ensino Médio (ENEM)"
 output: 
   html_document:
     highlight: breezedark
@@ -12,15 +10,14 @@ output:
     toc_float: yes
     smooth_scroll: no
     collapsed: yes
-    
 params:
-    cidade: "Curitiba"
+    cidade: "Santa Helena"
     estado: "PR"
-    
+css: custom.css
 ---
 
 ```{r setup geral}
-#| include=FALSE
+#| include = FALSE
 
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -31,57 +28,40 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Contextualização
-
-<br>
-
-<div align=justify style="text-indent: 3em;">
-Criado inicialmente para avaliar a qualidade do ensino no Brasil, o Exame Nacional do Ensino Médio não só constitui a principal forma de acesso à educação superior de mais de 500 universidades públicas e privadas do pais, como também serve de base para formulação de políticas públicas para a educação. Ele pode ser usado pelo Estado como indicador de qualidade do ensino nas escolas públicas e privadas.
-
-Os dados históricos do ENEM, disponibilizados pelo Instituto de Estudos e Pesquisas Educacionais Anísio Teixeira, tem sido objeto de diversos estudos em que técnicas de análise são aplicadas por meio de linguagens de programação como Python, R, Java, entre outras.
-
-Entretanto, embora os dados estejam disponíveis à sociedade na forma de microdados, não existem ferramentas gratuitas que permitam ao cidadão ter acesso às informações geradas a partir destes dados.
-
-
-Este projeto tem como propósito elaborar um relatório em html com o resultado do desempenho dos alunos de um município brasileiro, de forma reprodutível, ou seja, gerando relatórios diversos a depender do nome do município fornecido no próprio documento antes da renderização.
-<br>
-
-</div>
-
-```{r inclusão de figura}
-#| fig.align = "center",
-#| out.width = "40%",
+```{r Leitura da base de dados}
 #| echo = FALSE
-
-
-knitr::include_graphics("../data-raw/mona.png")
+enem <- readr:: read_csv("../data/enem_analise_final.csv")
 
 ```
-<br>
+```{r base de dados para cidade e ano escolhidos}
+#| echo = FALSE
 
-## Metodologia
+enem_cidade <- enem |> 
+  dplyr::filter(no_municipio_prova == params$cidade & nu_ano == 2020)
 
-<div align=justify style="text-indent: 3em;">
-Trabalhei com os dados disponíveis no site do [Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira](https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem) dos anos 2018, 2019 e 2020 (acesso em 20/05/2022).
-
-Os arquivos possuem as seguintes especificações: 2018 com 5513.733 linhas (2,6 GB), 2019 com 5.095.171 linhas( 2,4 GB) e 2020 com 5.783.109 linhas (2GB).
-
-Em função dos tamanhos dos arquivos, utilizei apenas os dados do estado do Paraná e seus municípios.
-
-</div>
-
-<br>
+```
 
 
-<br>
 
-## Relatório - Município de `r params$cidade`/ `r params$estado`.
+```{r total de alunos}
+#| echo = FALSE
+total_alunos_municipio <- enem_cidade |> 
+    dplyr::summarise(total_alunos = dplyr::n())
+
+```
 
 <br>
 
+# Informações Gerais
 
+| Município: `r params$cidade` |                                  Estado: `r params$estado` |
+|:-----------------------------|-----------------------------------------------------------:|
+| Autor: Marcio Vakassugui     |                                       Data: `r Sys.Date()` |
+|                              | Total de alunos: `r total_alunos_municipio`                |
 
-```{r Lista dos estados da federacao}
+<br>
+
+```{os estados da federacao}
 #| echo = FALSE
 
 estado_federacao <- dplyr::case_when(
@@ -113,46 +93,41 @@ estado_federacao <- dplyr::case_when(
     params$estado == "SE" ~ "Sergipe",
     params$estado == "TO" ~ "Tocantins"
 )
-
 ```
 
+# Informações sobre a prova de redação
 
-```{r Leitura da base de dados}
+<br>
+
+A nota da redação é composta por cinco competências com notas que variam de 0 a 200 pontos. A soma das seguintes competências resulta na nota final da redação do aluno.
+
+1.  Demonstrar domínio da modalidade escrita formal da Língua Portuguesa;
+
+2.  Compreender a proposta de redação e aplicar conceitos das várias áreas de conhecimento para desenvolver o tema, dentro dos limites estruturais do texto dissertativo-argumentativo em prosa;
+
+3.  Selecionar, relacionar, organizar e interpretar informações, fatos, opiniões e argumentos em defesa de um ponto de vista;
+
+4.  Demonstrar conhecimento dos mecanismos linguísticos necessários para a construção da argumentação;
+
+5.  Elaborar proposta de intervenção para o problema abordado, respeitando os direitos humanos.
+
+<br>
+
+### Notas médias das competências
+
+```{r preparacao dos dados para o plot1}
 #| echo = FALSE
-enem <- readr:: read_csv("../data/enem_analise_final.csv")
-
-```
-<br>
-
-## Desempenho na Redação
-
-<br>
-
-<div align=justify style="text-indent: 3em;">
-A nota da redação é composta por cinco competências com notas que variam de 0 a 200 pontos. A soma das competências resulta na nota final da redação do aluno.
-
-São as seguintecompets competências:
-
-- dominío da norma padrão da Língua Portuguesa;
-- compreensão da proposta da redação;
-- emprego de mecanismos linguísticos alternativos;
-- elaboração de uma proposta de intervenção para o problema abordado.
-
-<br>
-
-```{r plot1 - Media dos componentes da redacao}
 
 # ANÁLISES DAS MÉDIAS DAS NOTAS QUE COMPÕEM AS NOTAS DA REDAÇÃO
 
 # Cálculo das médias dos componentes da redação
-medias_comp_redacao <- enem |>
-  dplyr::filter(nu_ano == 2018, no_municipio_prova == params$cidade) |>
+medias_comp_redacao <- enem_cidade |>
   dplyr::summarise(dplyr::across(
     .cols = dplyr::starts_with("nu_nota_comp"),
     .fns = mean, na.rm = TRUE
   ))
 
-medias_comp_redacao <- medias_comp_redacao |>                            # renomear as variáveis
+medias_comp_redacao <- medias_comp_redacao |>                           # renomear as variáveis
   dplyr::rename(
     "comp1" = "nu_nota_comp1",
     "comp2" = "nu_nota_comp2",
@@ -160,7 +135,6 @@ medias_comp_redacao <- medias_comp_redacao |>                            # renom
     "comp4" = "nu_nota_comp4",
     "comp5" = "nu_nota_comp5"
   )
-
 
 # VISUALIZAÇÃO DO RESULTADO
 
@@ -177,8 +151,15 @@ medias_comp_redacao <- medias_comp_redacao |>
         values_to = "medias") |>
     dplyr::mutate(notas_comp_redacao = as.factor(notas_comp_redacao))
 
+```
+
+
+```{r plot1 - Media dos componentes da redacao}
+
+source("../R/funcao_tema_graficos.R")
+
 # Cosntruir o gráfico de barras das médias dos componentes que compõem a nota da redação
-p1 <- medias_comp_redacao |>                                            # base
+p1 <- medias_comp_redacao |>                                                             # base
   dplyr::mutate(
     notas_comp_redacao = forcats::fct_reorder(
       notas_comp_redacao,
@@ -186,7 +167,7 @@ p1 <- medias_comp_redacao |>                                            # base
       .desc = TRUE
     )
   ) |>
-  ggplot2::ggplot() +                                                   # gráfico
+  ggplot2::ggplot() +                                                                 # gráfico
   ggplot2::aes(
     x = notas_comp_redacao,
     y = medias,
@@ -195,76 +176,30 @@ p1 <- medias_comp_redacao |>                                            # base
   ggplot2::geom_col(
     fill = "#576BC7"
   ) +
-  ggplot2::geom_label(                                                  # labels
-    size = 4,
+  ggplot2::geom_label(                                                                 # labels
+    size = 5,
     color = "#D6F3FF",
     alpha = 0,
     nudge_y = -10
   ) +
-  ggplot2::labs(                                                        # títulos dos eixos
+  ggplot2::labs(                                                            # títulos dos eixos
     title = "Médias dos componentes da redação",
     subtitle = "A nota da redação é definida pela soma dos componentes",
     x = "notas dos componentes",
     y = "média das notas"
   ) +
-  ggplot2::theme_classic() +                                            # tema
+  ggplot2::theme_classic() +                                                             # tema
   ggplot2::theme(
     legend.position = "none"
   ) +
-  ggplot2::theme(                                                       # customização do tema
-    panel.background = ggplot2::element_rect(fill = "#D6F3FF"),                # cor do fundo do gráfico
-    plot.background = ggplot2::element_rect(fill = "#D6F3FF"),                 # cor da grade externa
-    plot.margin = ggplot2::unit(c(1, 2, 1, 1), "cm"),                          # distância das margens
-    plot.title = ggplot2::element_text(                                        # título do gráfico.
-      size = 18,                                                                     # tamanho da fonte
-      face = "bold",                                                                # não negrito
-      family = "",                                                                   # fonte do título
-      hjust = 0,                                                                     # posição na horizontal
-      margin = ggplot2::unit(c(0, 0, 0.5, 0.5), "cm")                                # margens do título
-    ),
-    plot.subtitle = ggplot2::element_text(                                     # subtítulo
-      size = 11,                                                                     # tamanho da fonte
-      family = "",                                                                   # fonte do subtítulo
-      hjust = 0,                                                                     # posição na horizontl
-    ),
-    text = ggplot2::element_text(                                              # textos config. geral de texto
-      family = "",                                                                   # fonte
-      color = "#000E14",                                                             # cor
-      size = 13,                                                                     # tamanho da fonte
-      hjust = 0,                                                                     # posição na horizontal
-      face = "bold"                                                                  # negrito
-    ),
-    axis.title = ggplot2::element_text(                                        # texto do título do eixo x e y
-        face = "bold",                                                                 # negrito
-        size = 13,                                                                     # tamanho
-        hjust = 0.5,                                                                   # posição na horizontal
-    ),
-    axis.text.x = ggplot2::element_text(                                       # texto do eixo x
-      color = "#000E14",                                                             # cor
-      size = 11,                                                                    # tamanho
-      face = "plain",                                                                 # negrito
-      margin = ggplot2::unit(c(0.3, 0, 0.5, 0), "cm")                                # margens do texto
-    ),
-    axis.text.y = ggplot2::element_text(                                       # texto do eixo y
-      color = "#000E14",                                                             # cor
-      size = 11,                                                                    # tamanho
-      face = "plain",                                                                 # negrito
-      family = "",                                                                   # fonte
-      margin = ggplot2::unit(c(0, 0.5, 0, 0.5), "cm")                                # margens do texto
-    ),
-    axis.ticks.x = ggplot2::element_line(color = "#1F1F1F"),                   # ticks do eixo x
-    axis.line.x = ggplot2::element_line(color = "#1F1F1F"),                    # cor da linha do eixo x
-    axis.ticks.y = ggplot2::element_line(color = "#1F1F1F"),                   # padrões dos ticks do eixo x
-    axis.line.y = ggplot2::element_line(color = "#1F1F1F"),                    # cor da linha do eixo y
-  )
-
+  theme_enem()
+ 
 p1
 
 ```
-</div>
-
 
 ```{r competencias da redacao com maior e menor média}
+#| echo = FALSE
 
 comp_max <- medias_comp_redacao |> 
     dplyr::slice_max(order_by = medias)
@@ -273,25 +208,168 @@ comp_min <- medias_comp_redacao |>
     dplyr::slice_min(order_by = medias)
 
 melhor_componente_redacao <- dplyr::case_when(
-    medias_comp_redacao[["medias"]][1] == comp_max ~ "componente um",
-    medias_comp_redacao[["medias"]][2] == comp_max ~ "componente dois",
-    medias_comp_redacao[["medias"]][3] == comp_max ~ "componente três",
-    medias_comp_redacao[["medias"]][4] == comp_max ~ "componente quatro",
-    medias_comp_redacao[["medias"]][5] == comp_max ~ "componente cinco"
+    medias_comp_redacao[["medias"]][1] == comp_max ~ "competência um",
+    medias_comp_redacao[["medias"]][2] == comp_max ~ "competência dois",
+    medias_comp_redacao[["medias"]][3] == comp_max ~ "competência três",
+    medias_comp_redacao[["medias"]][4] == comp_max ~ "competência quatro",
+    medias_comp_redacao[["medias"]][5] == comp_max ~ "competência cinco"
 )
 
 
 pior_componente_redacao <- dplyr::case_when(
-    medias_comp_redacao[["medias"]][1] == comp_min ~ "componente um",
-    medias_comp_redacao[["medias"]][2] == comp_min ~ "componente dois",
-    medias_comp_redacao[["medias"]][3] == comp_min ~ "componente três",
-    medias_comp_redacao[["medias"]][4] == comp_min ~ "componente quatro",
-    medias_comp_redacao[["medias"]][5] == comp_min ~ "componente cinco"
+    medias_comp_redacao[["medias"]][1] == comp_min ~ "competência um",
+    medias_comp_redacao[["medias"]][2] == comp_min ~ "competência dois",
+    medias_comp_redacao[["medias"]][3] == comp_min ~ "competência três",
+    medias_comp_redacao[["medias"]][4] == comp_min ~ "competência quatro",
+    medias_comp_redacao[["medias"]][5] == comp_min ~ "competência cinco"
     )
+
+melhor_competencia <- dplyr::case_when(
+    comp_max[1] == "comp1" ~ "demonstrar domínio da modalidade escrita formal da Língua Portuguesa",
+    comp_max[1] == "comp2" ~ "compreender a proposta de redação e aplicar conceitos das várias áreas de conhecimento para desenvolver o tema, dentro dos limites estruturais do texto dissertativo-argumentativo em prosa",
+    comp_max[1] == "comp3" ~ "selecionar, relacionar, organizar e interpretar informações, fatos, opiniões e argumentos em defesa de um ponto de vista",
+    comp_max[1] == "comp4" ~ "demonstrar conhecimento dos mecanismos linguísticos necessários para a construção da argumentação",
+    comp_max[1] == "comp5" ~ "elaborar proposta de intervenção para o problema abordado, respeitando os direitos humanos"
+)
+
+pior_competencia <- dplyr::case_when(
+    comp_min[1] == "comp1" ~ "demonstrar domínio da modalidade escrita formal da Língua Portuguesa",
+    comp_min[1] == "comp2" ~ "compreender a proposta de redação e aplicar conceitos das várias áreas de conhecimento para desenvolver o tema, dentro dos limites estruturais do texto dissertativo-argumentativo em prosa",
+    comp_min[1] == "comp3" ~ "selecionar, relacionar, organizar e interpretar informações, fatos, opiniões e argumentos em defesa de um ponto de vista",
+    comp_min[1] == "comp4" ~ "demonstrar conhecimento dos mecanismos linguísticos necessários para a construção da argumentação",
+    comp_min[1] == "comp5" ~ "elaborar proposta de intervenção para o problema abordado, respeitando os direitos humanos"
+)
 
 ```
 
-<div align=justify style="text-indent: 3em;">
-Os alunos da cidade de `r params$cidade` obtiveram o melhor desempenho no `r melhor_componente_redacao` com média de 
+Os alunos que realizaram o exame na cidade de **`r params$cidade`** obtiveram o melhor desempenho na `r melhor_componente_redacao[2]` da redação, `r melhor_competencia`, com a média de **`r round(medias_comp_redacao[["medias"]][1],2)`** e o pior desempenho na `r pior_componente_redacao[2]`, `r pior_competencia`, com a média de **`r round(medias_comp_redacao[["medias"]][5],2)`**.
 
-</div>
+```{r notas máximas, quantidade de zeros, média e percentual de zeros no município}
+#| echo = FALSE
+
+nota_max <- enem_cidade |>
+    dplyr::summarize(nota_max = max(nu_nota_redacao))
+
+nota_min <- enem_cidade |>
+    dplyr::summarise(nota_min = min(nu_nota_redacao))
+
+nota_media <- enem_cidade |>
+    dplyr::summarise(nota_media = mean(nu_nota_redacao, na.rm = TRUE))
+
+zeros_redacao <- enem |>
+    dplyr::filter(no_municipio_prova == params$cidade & nu_nota_redacao == 0 & nu_ano == 2020) |>
+    dplyr:: summarise(qtde_zeros = dplyr::n())
+
+perc_zeros_redacao <- enem_cidade |>
+    dplyr::summarise(perc_zeros_redacao = round((zeros_redacao / total_alunos_municipio)*100,3))
+
+```
+
+```{r base para grafico freq_relativa notas por intervalo de classes}
+#| echo = FALSE
+
+fabs_notas_redacao <- enem_cidade |>
+  dplyr::select(nu_nota_redacao) |>
+  table()
+
+# total de alunos com nota máxima
+
+qtd_nota_max <- fabs_notas_redacao |>
+  tail(n=1) 
+
+# criar as classes de frequências das notas
+
+intervalo_classes_notas <- seq(0, 1000, 100)
+tab_classes_notas <- table(cut(enem_cidade$nu_nota_redacao,
+                               breaks = intervalo_classes_notas,
+                               right = FALSE)) |>
+  prop.table() |>
+  data.frame() |>
+  dplyr::mutate(Freq = Freq*100)
+
+```
+
+
+A nota máxima **`r nota_max`** foi obtida por `r qtd_nota_max` aluno(s) e a nota média foi de **`r round(nota_media,3)`**. Um total de **`r zeros_redacao`** participante(s) entre os **`r total_alunos_municipio`** alunos obtiveram nota zero , o que representa um percentual de **`r perc_zeros_redacao`%**.
+
+<br>
+
+### Distribuição das notas por competências
+
+```{r gráfico de densidade de distribuição das notas por competências}
+
+# pivotar a base
+comp_redacao <- enem_cidade |>
+  dplyr::select(nu_nota_comp1,
+                nu_nota_comp2,
+                nu_nota_comp3,
+                nu_nota_comp4,
+                nu_nota_comp5) |>
+  dplyr::rename("comp1" = "nu_nota_comp1",
+                "comp2" = "nu_nota_comp2",
+                "comp3" = "nu_nota_comp3",
+                "comp4" = "nu_nota_comp4",
+                "comp5" = "nu_nota_comp5",)
+
+comp_redacao_long <- comp_redacao |>
+  tidyr::pivot_longer(
+    cols = c(
+      "comp1",
+      "comp2",
+      "comp3",
+      "comp4",
+      "comp5"
+    ),
+    names_to = "competencias",
+    values_to = "notas_comp"
+  ) |>
+  dplyr::mutate(competencias = as.factor(competencias))
+
+p2 <- comp_redacao_long |>
+  ggplot2::ggplot(ggplot2::aes(competencias, notas_comp, fill = competencias))+
+  ggplot2::geom_violin(width = 0.6)+
+  ggplot2::geom_boxplot(width = 0.1, color = "black", alpha = 0.2)+
+  #ggplot2::geom_jitter(color="black", size=0.4, alpha=0.02) +  
+  ggplot2::labs(
+    title = "Violinplot e boxplot das competências",
+    x = "Competências",
+    y = "notas"
+  )+
+  theme_enem()+
+  ggplot2::theme(
+    legend.position = "none"
+  )
+
+p2
+```
+
+No gráfico acima, pode-se observar a densidade de distribuição das notas por competências exigidas na redação e as médias já apresentadas no gráfico 01. Os locais de maior área em torno dos boxplots representam maiores concentrações de dados, enquanto que locais de menor área indicam baixa concentração de dados.
+
+```{r gráfico freq_relativa notas por intervalo de classes}
+
+p3 <- tab_classes_notas |>
+  ggplot2::ggplot()+
+  ggplot2::aes(x= Var1,
+               y = Freq,
+               label = round(Freq, 3))+
+  ggplot2::geom_col(fill = "#576BC7") +
+  ggplot2::geom_label(                                                                 # labels
+    size = 5,
+    color = "#576BC7",
+    alpha = 0,
+    nudge_y = 1.5
+  ) +
+  ggplot2::labs(                                                            # títulos dos eixos
+    title = "Frequências relativas de notas por intervalos de classe",
+    x = "Intervalo de notas",
+    y = "Frequência (%)"
+  )+
+  ggplot2::theme_classic()+
+  theme_enem()
+
+p3
+
+
+
+```
+
