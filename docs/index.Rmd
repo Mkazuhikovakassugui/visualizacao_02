@@ -228,6 +228,16 @@ p3
 ```
 
 <br>
+Acima, podemos observar a distribuição de frequências relativas percentuais das notas por intervalo de classes. 
+
+<br>
+
+### Principais problemas que resultaram na anulação das redações
+
+<p style="color:red";>Trabalhar aqui o plot com os dados !!!! </p>
+
+<br>
+
 
 ### Notas médias das competências
 
@@ -379,6 +389,7 @@ pior_competencia <- dplyr::case_when(
 
 Os alunos obtiveram o melhor desempenho na `r melhor_componente_redacao[2]` da redação, `r melhor_competencia`, com a média de **`r round(medias_comp_redacao[["medias"]][1],2)`** e o pior desempenho na `r pior_componente_redacao[2]`, `r pior_competencia`, com a média de **`r round(medias_comp_redacao[["medias"]][5],2)`**.
 
+<br>
 
 ### Distribuição das notas por competências
 
