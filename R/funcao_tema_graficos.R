@@ -29,13 +29,13 @@ theme_enem <- function(variables) {
         ),
         axis.text.x = ggplot2::element_text(                                  # texto do eixo x
             color = "#000E14",
-            size = 14,
+            size = 16,
             face = "plain",
             margin = ggplot2::unit(c(0.3, 0, 0.5, 0), "cm")
         ),
         axis.text.y = ggplot2::element_text(                                  # texto do eixo y
             color = "#000E14",
-            size = 14,
+            size = 16,
             face = "plain",
             family = "",
             margin = ggplot2::unit(c(0, 0.5, 0, 0.5), "cm")
