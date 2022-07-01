@@ -243,11 +243,33 @@ p2 <- tab_classes_notas |>
 p2
 
 
+# GRÁFICO REDACÕES COM PROBLEMAS
+
+redacoes_com_problemas <- enem_cidade |>
+  dplyr::filter(tp_status_redacao != "Sem problemas") |>
+  dplyr::group_by(tp_status_redacao) |>
+  dplyr::summarise(qte = dplyr::n()) |>
+  dplyr::mutate(tp_status_redacao = as.factor(tp_status_redacao))
 
 
+p5 <- redacoes_com_problemas |>
+  ggplot2::ggplot(ggplot2::aes(x = qte,
+                               y = tp_status_redacao,
+                               label = qte))+
+  ggplot2::geom_col(fill = "#576BC7")+
+  ggplot2::geom_label(                                                                 # labels
+    size = 4,
+    color = "#576BC7",
+    alpha = 0,
+    nudge_x = 1
+    ) +
+  ggplot2::labs(                                                            # títulos dos eixos
+    title = "Principais razões para eliminação das redações",
+    x = "razões",
+    y = "quantidades"
+  ) +
+  ggplot2::theme_classic()+
+  theme_enem()
 
-´# Notas médias nas edições de 2018, 2019 e 2020 ------------------------------------------
-
-
-
+p5
 

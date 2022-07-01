@@ -1,6 +1,6 @@
 ---
 title: "Relatório de desempenho dos alunos no Exame Nacional de Ensino Médio (ENEM)"
-Autor: "Marcio Vakassugui"
+author: "Marcio Vakassugui"
 output: 
   html_document:
     highlight: breezedark
@@ -49,7 +49,7 @@ enem_cidade <- enem |>
 
 Elaborar um modelo de relatório em HTML, produzido em RMarkdown, que apresente o desempenho dos alunos na prova do Exame Nacional do Ensino Médio (ENEM) por município. 
 
-O modelo deve ter a característica de reprodutibilidade, de modo que relatórios (formato, textos e visualizações) sejam produzidos por meio de uma rotina de procedimentos (script) automatizadamente para todos os municípios do estado do Parana, nos quais as provas foram realizadas.
+O modelo deve ter a característica de reprodutibilidade, de modo que relatórios (formato, textos e visualizações) sejam produzidos por meio de uma rotina de procedimentos (script com o uso do recurso *params* do Rmarkdown) de forma automatizada para todos os 88 municípios do estado do Paraná, nos quais as provas foram realizadas.
 
 
 ```{r total de alunos}
@@ -160,21 +160,26 @@ tab_classes_notas <- table(cut(enem_cidade$nu_nota_redacao,
 
 source("../R/funcao_tema_graficos.R")
 
+# gráfico do boxplot das notas das redações (parte superior da visualização)
 p1 <- enem_cidade |> 
   dplyr::select(nu_nota_redacao) |> 
   ggplot2::ggplot(ggplot2::aes(x = nu_nota_redacao))+
-  ggplot2::geom_boxplot()+
+  ggplot2::geom_boxplot(fill = "#70A288")+
   ggplot2::labs(
+    title = "BoxPlot e Histograma das Notas de Redação
+    ",
     x = "",
     y = ""
   )+
   ggplot2::theme_classic()+
   theme_enem()
-  
+
+
+# gráfico do histograma das notas das redações (parte inferior da visualização)
 p2 <- enem_cidade |> 
   dplyr::select(nu_nota_redacao) |> 
   ggplot2::ggplot(ggplot2::aes(x = nu_nota_redacao))+
-  ggplot2::geom_histogram(fill = "#576BC7",
+  ggplot2::geom_histogram(fill = "#70A288",
                           color = "#000000")+
   ggplot2::labs(
     x = "notas",
@@ -183,8 +188,9 @@ p2 <- enem_cidade |>
   ggplot2::theme_classic()+
   theme_enem()
 
-library(patchwork)
+library(patchwork)                            # uso do pacote patchwork para união dos gráficos
 
+# disposição dos gráficos
 p1/p2
 
 ```
@@ -205,11 +211,11 @@ p3 <- tab_classes_notas |>
   ggplot2::aes(x= Var1,
                y = Freq,
                label = round(Freq, 3))+
-  ggplot2::geom_col(fill = "#576BC7",
+  ggplot2::geom_col(fill = "#70A288",
                     color = "#000000") +
   ggplot2::geom_label(                                                                 # labels
     size = 5,
-    color = "#576BC7",
+    color = "#000000",
     alpha = 0,
     nudge_y = 1.5
   ) +
@@ -234,7 +240,40 @@ Acima, podemos observar a distribuição de frequências relativas percentuais d
 
 ### Principais problemas que resultaram na anulação das redações
 
-<p style="color:red";>Trabalhar aqui o plot com os dados !!!! </p>
+```{r gráfico problemas na redação}
+
+redacoes_com_problemas <- enem_cidade |>
+  dplyr::filter(tp_status_redacao != "Sem problemas") |>
+  dplyr::group_by(tp_status_redacao) |>
+  dplyr::summarise(qte = dplyr::n()) |>
+  dplyr::mutate(tp_status_redacao = as.factor(tp_status_redacao))
+
+
+p5 <- redacoes_com_problemas |>
+  ggplot2::ggplot(ggplot2::aes(x = qte,
+                               y = tp_status_redacao,
+                               label = qte))+
+  ggplot2::geom_col(fill = "#70A288")+
+  ggplot2::geom_label(                                                                 # labels
+    size = 5,
+    color = "#000000",
+    alpha = 0,
+    nudge_x = 3
+    ) +
+  ggplot2::labs(                                                            # títulos dos eixos
+    title = "Principais razões para eliminação das redações",
+    x = "quantidades",
+    y = "razões"
+  ) +
+  ggplot2::theme_classic()+
+  theme_enem()
+
+p5
+
+
+```
+
+
 
 <br>
 
@@ -318,14 +357,14 @@ p1 <- medias_comp_redacao |>                                                    
     label = round(medias, 2)
   ) +
   ggplot2::geom_col(
-    fill = "#576BC7",
+    fill = "#70A288",
     color = "#000000"
   ) +
   ggplot2::geom_label(                                                                 # labels
     size = 5,
-    color = "#D6F3FF",
+    color = "#000000",
     alpha = 0,
-    nudge_y = -10
+    nudge_y = 7
   ) +
   ggplot2::labs(                                                            # títulos dos eixos
     title = "Médias dos componentes da redação",
@@ -387,7 +426,7 @@ pior_competencia <- dplyr::case_when(
 
 ```
 
-Os alunos obtiveram o melhor desempenho na `r melhor_componente_redacao[2]` da redação, `r melhor_competencia`, com a média de **`r round(medias_comp_redacao[["medias"]][1],2)`** e o pior desempenho na `r pior_componente_redacao[2]`, `r pior_competencia`, com a média de **`r round(medias_comp_redacao[["medias"]][5],2)`**.
+Os alunos obtiveram o melhor desempenho na `r melhor_componente_redacao[2]` da redação, `r melhor_competencia`, com a média de **`r round(comp_max[2],2)`** e o pior desempenho na `r pior_componente_redacao[2]`, `r pior_competencia`, com a média de **`r round(comp_min[2],2)`**.
 
 <br>
 
