@@ -1,5 +1,5 @@
 ---
-title: "Relatório de desempenho dos alunos no Exame Nacional de Ensino Médio (ENEM)"
+title: "Relatório de desempenho dos alunos no Exame Nacional de Ensino Médio (ENEM) por município"
 author: "Marcio Vakassugui"
 output: 
   html_document:
@@ -12,12 +12,12 @@ output:
     smooth_scroll: no
     collapsed: yes
 params:
-    cidade: "Curitiba"
+    cidade: "Santa Helena"
     estado: "PR"
 css: custom.css
 ---
 
-```{r setup geral}
+```{r label= 'setup_geral'}
 #| include = FALSE
 
 knitr::opts_chunk$set(
@@ -29,13 +29,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r Leitura da base de dados}
+```{r label = 'leitura_base_de_dados'}
 #| echo = FALSE
 enem <- readr:: read_csv("../data/enem_analise_final.csv")
 
 ```
 
-```{r base de dados para cidade e ano escolhidos}
+```{r label =  'base_para_cidade_e_ano'}
 #| echo = FALSE
 
 enem_cidade <- enem |> 
@@ -47,12 +47,11 @@ enem_cidade <- enem |>
 
 # Objetivo
 
-Elaborar um modelo de relatório em HTML, produzido em RMarkdown, que apresente o desempenho dos alunos na prova do Exame Nacional do Ensino Médio (ENEM) por município. 
+Elaborar um modelo de relatório em HTML, produzido em RMarkdown, que apresente o desempenho dos alunos na prova do Exame Nacional do Ensino Médio (ENEM) por município.
 
 O modelo deve ter a característica de reprodutibilidade, de modo que relatórios (formato, textos e visualizações) sejam produzidos por meio de uma rotina de procedimentos (script com o uso do recurso *params* do Rmarkdown) de forma automatizada para todos os 88 municípios do estado do Paraná, nos quais as provas foram realizadas.
 
-
-```{r total de alunos}
+```{r label = 'total_de_alunos'}
 #| echo = FALSE
 total_alunos_municipio <- enem_cidade |> 
     dplyr::summarise(total_alunos = dplyr::n())
@@ -63,14 +62,13 @@ total_alunos_municipio <- enem_cidade |>
 
 # Informações Gerais
 
-| Município: `r params$cidade` |                                  Estado: `r params$estado` |
-|:-----------------------------|-----------------------------------------------------------:|
-| Total de alunos: `r total_alunos_municipio`  |                       Data: `r Sys.Date()` |
-
+| Município: `r params$cidade`                | Estado: `r params$estado` |
+|:--------------------------------------------|--------------------------:|
+| Total de alunos: `r total_alunos_municipio` |      Data: `r Sys.Date()` |
 
 <br>
 
-```{os estados da federacao}
+```{r label = 'lista_estados_da_federacao'}
 #| echo = FALSE
 
 estado_federacao <- dplyr::case_when(
@@ -106,7 +104,7 @@ estado_federacao <- dplyr::case_when(
 
 # Informações sobre a prova de redação
 
-```{r notas máximas, quantidade de zeros, média e percentual de zeros no município}
+```{r label = 'notas_máximas_quantidade_de_zeros_média_município'}
 #| echo = FALSE
 
 nota_max <- enem_cidade |>
@@ -127,7 +125,7 @@ perc_zeros_redacao <- enem_cidade |>
 
 ```
 
-```{r base para grafico freq_relativa notas por intervalo de classes}
+```{r label = 'base_grafico_freq_relativa_intervalo_de_classes'}
 #| echo = FALSE
 
 fabs_notas_redacao <- enem_cidade |>
@@ -153,21 +151,22 @@ tab_classes_notas <- table(cut(enem_cidade$nu_nota_redacao,
 
 <br>
 
+### Distribuição das notas de redação
 
-### Notas das redações
+<br> As notas das redações variam de 0 a 1000 pontos. No gráfico 01, pode-se visualizar por meio do boxPlot e do histograma a média e a distribuição das notas. <br>
 
-```{r grafico notas das redacões}
+```{r label = 'grafico_01'}
+#| fig.cap = "Gráfico 01 - BoxPlot e histograma da distribuição de notas de redação"
 
 source("../R/funcao_tema_graficos.R")
 
 # gráfico do boxplot das notas das redações (parte superior da visualização)
-p1 <- enem_cidade |> 
+p1_1 <- enem_cidade |> 
   dplyr::select(nu_nota_redacao) |> 
   ggplot2::ggplot(ggplot2::aes(x = nu_nota_redacao))+
   ggplot2::geom_boxplot(fill = "#70A288")+
   ggplot2::labs(
-    title = "BoxPlot e Histograma das Notas de Redação
-    ",
+    title = "Distribuição das notas de redação ",
     x = "",
     y = ""
   )+
@@ -176,7 +175,7 @@ p1 <- enem_cidade |>
 
 
 # gráfico do histograma das notas das redações (parte inferior da visualização)
-p2 <- enem_cidade |> 
+p1_2 <- enem_cidade |> 
   dplyr::select(nu_nota_redacao) |> 
   ggplot2::ggplot(ggplot2::aes(x = nu_nota_redacao))+
   ggplot2::geom_histogram(fill = "#70A288",
@@ -191,22 +190,24 @@ p2 <- enem_cidade |>
 library(patchwork)                            # uso do pacote patchwork para união dos gráficos
 
 # disposição dos gráficos
-p1/p2
+p1 <- p1_1/p1_2
+p1
 
 ```
 
 <br>
 
-Entre os alunos que realizaram o exame na cidade de **`r params$cidade`**, a maior nota **`r nota_max`** foi conquistada por `r qtd_nota_max` aluno(s). Entretanto, **`r zeros_redacao`** participante(s), entre os **`r total_alunos_municipio`** aluno(s), obtiveram nota zero , o que representa um percentual de **`r perc_zeros_redacao`%**.
-A nota média foi de **`r round(nota_media,3)`**.
+Entre os alunos que realizaram o exame na cidade de **`r params$cidade`**, a maior nota **`r nota_max`** foi conquistada por `r qtd_nota_max` aluno(s). Entretanto, **`r zeros_redacao`** participante(s), entre os **`r total_alunos_municipio`** aluno(s), obtiveram nota zero , o que representa um percentual de **`r perc_zeros_redacao`%**. A nota média foi de **`r round(nota_media,3)`**.
 
 <br>
 
 ### Distribuição das notas das redações por intervalo de classes.
 
-```{r gráfico freq_relativa notas por intervalo de classes}
+```{r label = 'grafico_02'}
+#| fig.cap = "Gráfico 02 - Diagrama de colunas da distribuição de notas por intervalos"
 
-p3 <- tab_classes_notas |>
+
+p2 <- tab_classes_notas |>
   ggplot2::ggplot()+
   ggplot2::aes(x= Var1,
                y = Freq,
@@ -220,36 +221,54 @@ p3 <- tab_classes_notas |>
     nudge_y = 1.5
   ) +
   ggplot2::labs(                                                            # títulos dos eixos
-    title = "Frequências relativas de notas por intervalos de classe",
+    title = "Frequência relativa por intervalo de classes",
     x = "Intervalo de notas",
     y = "Frequência (%)"
   )+
   ggplot2::theme_classic()+
   theme_enem()
 
-p3
-
-
+p2
 
 ```
 
-<br>
-Acima, podemos observar a distribuição de frequências relativas percentuais das notas por intervalo de classes. 
+<br> No gráfico 02, pode-se observar melhor como as notas de redação se distribuíram entre os valores de 0 a 1000. Os valores mostram o percentual de notas de cada intervalo. Valores maiores indicam a proporção de notas mais comuns.
 
 <br>
 
 ### Principais problemas que resultaram na anulação das redações
 
-```{r gráfico problemas na redação}
+<br>
+
+A banca avaliadora atribui nota 0 (zero) de acordo com as seguintes causas:<br>
+
+1.  Não atendimento ao tipo: a redação que possua outra estrutura textual que não seja a estrutura dissertativo-argumentativo;
+
+2.  Fuga ao tema: a que não atende à proposta solicitada;
+
+3.  Em branco: a que não apresente texto escrito na folha de redação;
+
+4.  Texto insuficiente: a que apresente até 7 linhas, qualquer que seja o conteúdo;
+
+5.  Parte desconectada: a que apresenta parte do texto deliberadamente desconectada com o tema proposto;
+
+6.  Anulada: a que apresenta impropérios, desenhos ou outras formas propositais de anulação;
+
+7.  Cópia Texto Motivador: a cópia de textos motivadores enseja a desconsideração das linhas para efeito de correção e de contagem do número mínimos de linhas, podendo levar à nota 0 no caso de incidência em algum dos motivos citados acima.
+
+<br>
+
+```{r label = 'grafico_03'}
+#| fig.cap = "Gráfico 03 - Diagrama de barras razões para notas zero"
 
 redacoes_com_problemas <- enem_cidade |>
-  dplyr::filter(tp_status_redacao != "Sem problemas") |>
+  dplyr::filter(nu_nota_redacao == 0) |>
   dplyr::group_by(tp_status_redacao) |>
   dplyr::summarise(qte = dplyr::n()) |>
   dplyr::mutate(tp_status_redacao = as.factor(tp_status_redacao))
 
 
-p5 <- redacoes_com_problemas |>
+p3 <- redacoes_com_problemas |>
   ggplot2::ggplot(ggplot2::aes(x = qte,
                                y = tp_status_redacao,
                                label = qte))+
@@ -258,7 +277,7 @@ p5 <- redacoes_com_problemas |>
     size = 5,
     color = "#000000",
     alpha = 0,
-    nudge_x = 3
+    nudge_x = 3.5
     ) +
   ggplot2::labs(                                                            # títulos dos eixos
     title = "Principais razões para eliminação das redações",
@@ -268,20 +287,27 @@ p5 <- redacoes_com_problemas |>
   ggplot2::theme_classic()+
   theme_enem()
 
-p5
+p3
 
 
 ```
 
+```{r label = "maior_motivo_anulacao_redacao"}
+#| echo = FALSE
 
+motivo_maior_redacoes_com_problemas <- redacoes_com_problemas |> 
+  dplyr::arrange(desc(qte)) |> 
+  dplyr::slice_head()
+
+```
+
+<br> **`r motivo_maior_redacoes_com_problemas[1]`** foi a principal causa de notas zero nas redações dos alunos de `r params$cidade` , com `r motivo_maior_redacoes_com_problemas[2]` casos.
 
 <br>
 
-
 ### Notas médias das competências
 
-<br> 
-
+<br>
 
 A nota da redação é composta por cinco competências com notas que variam de 0 a 200 pontos. A soma das seguintes competências resulta na nota final da redação do aluno.
 
@@ -297,9 +323,7 @@ A nota da redação é composta por cinco competências com notas que variam de 
 
 <br>
 
-### Notas médias das competências
-
-```{r preparacao dos dados para o plot1}
+```{r label = 'preparacao_dados_media_componentes'}
 #| echo = FALSE
 
 # ANÁLISES DAS MÉDIAS DAS NOTAS QUE COMPÕEM AS NOTAS DA REDAÇÃO
@@ -337,12 +361,12 @@ medias_comp_redacao <- medias_comp_redacao |>
 
 ```
 
-
-```{r plot1 - Media dos componentes da redacao}
+```{r label = 'grafico_04'}
+#| fig.cap = "Gráfico 04 - Média das notas por competências das redações"
 
 
 # Cosntruir o gráfico de barras das médias dos componentes que compõem a nota da redação
-p1 <- medias_comp_redacao |>                                                             # base
+p4 <- medias_comp_redacao |>                                                             # base
   dplyr::mutate(
     notas_comp_redacao = forcats::fct_reorder(
       notas_comp_redacao,
@@ -378,11 +402,11 @@ p1 <- medias_comp_redacao |>                                                    
   ) +
   theme_enem()
  
-p1
+p4
 
 ```
 
-```{r competencias da redacao com maior e menor média}
+```{r label = 'competencias_redacao_maior_menor_media'}
 #| echo = FALSE
 
 comp_max <- medias_comp_redacao |> 
@@ -426,13 +450,16 @@ pior_competencia <- dplyr::case_when(
 
 ```
 
+<br>
+
 Os alunos obtiveram o melhor desempenho na `r melhor_componente_redacao[2]` da redação, `r melhor_competencia`, com a média de **`r round(comp_max[2],2)`** e o pior desempenho na `r pior_componente_redacao[2]`, `r pior_competencia`, com a média de **`r round(comp_min[2],2)`**.
 
 <br>
 
 ### Distribuição das notas por competências
 
-```{r gráfico de densidade de distribuição das notas por competências}
+```{r label = 'base_do_grafico_05'}
+#| echo = FALSE
 
 # pivotar a base
 comp_redacao <- enem_cidade |>
@@ -461,13 +488,19 @@ comp_redacao_long <- comp_redacao |>
   ) |>
   dplyr::mutate(competencias = as.factor(competencias))
 
-p2 <- comp_redacao_long |>
+```
+
+```{r label = 'gráfico_05'}
+#| fig.cap = "Gráfico 05 - ViolinPlot e BoxPlot das competências das notas de redação"
+
+
+p5 <- comp_redacao_long |>
   ggplot2::ggplot(ggplot2::aes(competencias, notas_comp, fill = competencias))+
   ggplot2::geom_violin(width = 0.6)+
   ggplot2::geom_boxplot(width = 0.1, color = "black", alpha = 0.2)+
   #ggplot2::geom_jitter(color="black", size=0.4, alpha=0.02) +  
   ggplot2::labs(
-    title = "Violinplot e boxplot das competências",
+    title = "Densidade de distribuição das notas das competências de redação",
     x = "Competências",
     y = "notas"
   )+
@@ -476,11 +509,82 @@ p2 <- comp_redacao_long |>
     legend.position = "none"
   )
 
-p2
+p5
 ```
+
+<br>
 
 No gráfico acima, pode-se observar a densidade de distribuição das notas por competências exigidas na redação e as médias já apresentadas no gráfico 01. Os locais de maior área em torno dos boxplots representam maiores concentrações de dados, enquanto que locais de menor área indicam baixa concentração de dados.
 
 <br>
 
+### Evolução das notas das redações nos últimos anos
+
+```{r label = 'base_grafico_06'}
+#| echo = FALSE
+
+## filtrar a base para a cidade
+enem_redacao_historico <- enem |> 
+  dplyr::filter(no_municipio_prova == params$cidade) |> 
+  dplyr::select(nu_nota_redacao, nu_ano) |> 
+  dplyr::group_by(nu_ano) |> 
+  dplyr::summarise(media = mean(nu_nota_redacao, na.rm = TRUE))
+
+## alterar tipo de ano para inteiro
+enem_redacao_historico[["nu_ano"]] <- as.integer(enem_redacao_historico[["nu_ano"]])
+
+enem_redacao_historico_notas900 <- enem |> 
+  dplyr::filter(no_municipio_prova == params$cidade & nu_nota_redacao >=900) |> 
+  dplyr::select(nu_nota_redacao, nu_ano) |> 
+  dplyr::group_by(nu_ano) |> 
+  dplyr::summarise(qtde = dplyr::n())
+
+
+```
+
+
+```{r label = 'gráfico_06'}
+#| fig.cap = "Gráfico 06 - Gráfico de linhas das médias e notas acima de 900"
+p6_1 <- enem_redacao_historico |> 
+  ggplot2::ggplot()+
+  ggplot2::aes(x = nu_ano,
+               y = media)+
+  ggplot2::geom_line(
+    color = "grey"
+    )+
+  ggplot2::geom_point(
+    shape = 21,
+    color = "black",
+    fill = "#70A288",
+    size = 6
+  )+
+  ggplot2::theme_classic()+
+  theme_enem()+
+  ggplot2::labs(
+    title = "Médias das notas"
+  ) 
+ 
+p6_2 <- enem_redacao_historico_notas900 |> 
+  ggplot2::ggplot()+
+  ggplot2::aes(x = nu_ano,
+               y = qtde)+
+  ggplot2::geom_line(
+    color = "grey"
+  )+
+  ggplot2::geom_point(
+    shape = 21,
+    color = "black",
+    fill = "#70A288",
+    size = 6
+  )+
+  ggplot2::theme_classic()+
+  theme_enem()+
+  ggplot2::labs(
+    title = "Notas acima de 900"
+  ) 
+library(patchwork)
+p6 <-  p6_1 + p6_2
+
+p6
+```
 
