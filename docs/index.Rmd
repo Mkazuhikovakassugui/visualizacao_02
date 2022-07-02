@@ -12,7 +12,7 @@ output:
     smooth_scroll: no
     collapsed: yes
 params:
-    cidade: "Santa Helena"
+    cidade: "Londrina"
     estado: "PR"
 css: custom.css
 ---
@@ -31,6 +31,7 @@ knitr::opts_chunk$set(
 
 ```{r label = 'leitura_base_de_dados'}
 #| echo = FALSE
+
 enem <- readr:: read_csv("../data/enem_analise_final.csv")
 
 ```
@@ -64,7 +65,41 @@ total_alunos_municipio <- enem_cidade |>
 
 | Município: `r params$cidade`                | Estado: `r params$estado` |
 |:--------------------------------------------|--------------------------:|
-| Total de alunos: `r total_alunos_municipio` |      Data: `r Sys.Date()` |
+
+```{r label = 'base_mapa_cidade'}
+#| echo = FALSE,
+#| include = FALSE
+
+library(geobr)
+library(sf)
+source("../R/funcao_tema_graficos.R")
+
+dados_geobr <- geobr::read_municipality("PR")
+
+```
+
+
+```{r label = 'mapa_municipio'}
+
+dados_geobr |>
+  dplyr::filter(name_muni == params$cidade) |>
+  ggplot2::ggplot()+
+  ggplot2::geom_sf(data = dados_geobr,
+                   fill = "#70A288",
+                   color = "#000000",
+                   size = .1)+
+  ggplot2::geom_sf(fill = "red")+
+  ggspatial::annotation_north_arrow(location = "br")+
+  ggplot2::theme_classic()+
+  theme_enem()
+
+```
+
+<br>
+
+|                |  |
+|:--------------------------------------------|--------------------------:|
+| Alunos classificados: `r total_alunos_municipio` |      Data: `r Sys.Date()` |
 
 <br>
 
@@ -158,8 +193,6 @@ tab_classes_notas <- table(cut(enem_cidade$nu_nota_redacao,
 ```{r label = 'grafico_01'}
 #| fig.cap = "Gráfico 01 - BoxPlot e histograma da distribuição de notas de redação"
 
-source("../R/funcao_tema_graficos.R")
-
 # gráfico do boxplot das notas das redações (parte superior da visualização)
 p1_1 <- enem_cidade |> 
   dplyr::select(nu_nota_redacao) |> 
@@ -170,7 +203,7 @@ p1_1 <- enem_cidade |>
     x = "",
     y = ""
   )+
-  ggplot2::theme_classic()+
+  ggplot2::theme_bw()+
   theme_enem()
 
 
@@ -184,7 +217,7 @@ p1_2 <- enem_cidade |>
     x = "notas",
     y = ""
   )+
-  ggplot2::theme_classic()+
+  ggthemes::theme_map()+
   theme_enem()
 
 library(patchwork)                            # uso do pacote patchwork para união dos gráficos
@@ -236,7 +269,7 @@ p2
 
 <br>
 
-### Principais problemas que resultaram na anulação das redações
+### Principais problemas que resultam em anulação das redações
 
 <br>
 

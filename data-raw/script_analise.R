@@ -330,3 +330,24 @@ library(patchwork)
 p6 <-  p6_1 + p6_2
 
 p6
+
+
+# Mapa com a cidade em análise -----------------------------------------------------------
+
+library(geobr)
+library(sf)
+
+dados_geobr <- geobr::read_municipality("PR")
+
+# código ibge do município de Curitiba = 4106902
+
+
+mun <- read_municipality(code_muni=4106902, year=2017)
+
+dados_geobr |>
+  dplyr::filter(substr(name_muni,1,1) %in% c("C")) |>
+  ggplot2::ggplot()+
+  ggplot2::geom_sf(data = dados_geobr)+
+  ggplot2::geom_sf(fill = "lightblue")
+
+
