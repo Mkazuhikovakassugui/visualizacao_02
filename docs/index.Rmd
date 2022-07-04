@@ -1,6 +1,7 @@
 ---
 title: "Relatório de desempenho dos alunos no Exame Nacional de Ensino Médio (ENEM) por município"
-author: "Marcio Vakassugui"
+author: "Elaborado por: Marcio Vakassugui"
+date: '01-07-2022'
 output: 
   html_document:
     highlight: breezedark
@@ -12,8 +13,9 @@ output:
     smooth_scroll: no
     collapsed: yes
 params:
-    cidade: "Londrina"
+    cidade: "Guarapuava"
     estado: "PR"
+    ano: 2020
 css: custom.css
 ---
 
@@ -40,17 +42,17 @@ enem <- readr:: read_csv("../data/enem_analise_final.csv")
 #| echo = FALSE
 
 enem_cidade <- enem |> 
-  dplyr::filter(no_municipio_prova == params$cidade & nu_ano == 2020)
+  dplyr::filter(no_municipio_prova == params$cidade & nu_ano == params$ano)
 
 ```
 
 <br>
 
-# Objetivo
+## Objetivo
 
-Elaborar um modelo de relatório em HTML, produzido em RMarkdown, que apresente o desempenho dos alunos na prova do Exame Nacional do Ensino Médio (ENEM) por município.
+Elaborar um modelo de relatório em HTML, produzido em RMarkdown, que apresente visualizações de desempenho dos alunos na prova do Exame Nacional do Ensino Médio (ENEM) por município.  
 
-O modelo deve ter a característica de reprodutibilidade, de modo que relatórios (formato, textos e visualizações) sejam produzidos por meio de uma rotina de procedimentos (script com o uso do recurso *params* do Rmarkdown) de forma automatizada para todos os 88 municípios do estado do Paraná, nos quais as provas foram realizadas.
+O modelo deve ter a característica de reprodutibilidade, de modo que relatórios (formato, textos e visualizações) sejam produzidos a partir de uma rotina de procedimentos (*script*)de forma automatizada para todos os 88 municípios do estado do Paraná, nos quais as provas foram realizadas.
 
 ```{r label = 'total_de_alunos'}
 #| echo = FALSE
@@ -61,7 +63,9 @@ total_alunos_municipio <- enem_cidade |>
 
 <br>
 
-# Informações Gerais
+## Informações Gerais
+
+### Dados do exame
 
 | Município: `r params$cidade`                | Estado: `r params$estado` |
 |:--------------------------------------------|--------------------------:|
@@ -80,6 +84,7 @@ dados_geobr <- geobr::read_municipality("PR")
 
 
 ```{r label = 'mapa_municipio'}
+#| fig.out = "100%"
 
 dados_geobr |>
   dplyr::filter(name_muni == params$cidade) |>
@@ -88,18 +93,21 @@ dados_geobr |>
                    fill = "#70A288",
                    color = "#000000",
                    size = .1)+
-  ggplot2::geom_sf(fill = "red")+
-  ggspatial::annotation_north_arrow(location = "br")+
+  ggplot2::geom_sf(ggplot2::aes(fill = name_muni))+
+  ggspatial::annotation_north_arrow(location = "tr")+
   ggplot2::theme_classic()+
-  theme_enem()
+  theme_enem()+
+  ggplot2::theme(legend.title = ggplot2::element_blank(),
+                 legend.background = ggplot2::element_rect(fill = "#D6F3FF",
+                                                           colour = "#D6F3FF"))
 
 ```
 
 <br>
 
-|                |  |
-|:--------------------------------------------|--------------------------:|
-| Alunos classificados: `r total_alunos_municipio` |      Data: `r Sys.Date()` |
+|                           |                           |                     
+|:--------------------------|--------------------------:|
+| Alunos classificados: `r total_alunos_municipio` |  Ano do exame: `r params$ano`|
 
 <br>
 
@@ -137,7 +145,7 @@ estado_federacao <- dplyr::case_when(
 )
 ```
 
-# Informações sobre a prova de redação
+## Prova de redação
 
 ```{r label = 'notas_máximas_quantidade_de_zeros_média_município'}
 #| echo = FALSE
@@ -152,7 +160,7 @@ nota_media <- enem_cidade |>
     dplyr::summarise(nota_media = mean(nu_nota_redacao, na.rm = TRUE))
 
 zeros_redacao <- enem |>
-    dplyr::filter(no_municipio_prova == params$cidade & nu_nota_redacao == 0 & nu_ano == 2020) |>
+    dplyr::filter(no_municipio_prova == params$cidade & nu_nota_redacao == 0 & nu_ano == params$ano) |>
     dplyr:: summarise(qtde_zeros = dplyr::n())
 
 perc_zeros_redacao <- enem_cidade |>
@@ -184,14 +192,13 @@ tab_classes_notas <- table(cut(enem_cidade$nu_nota_redacao,
 
 ```
 
-<br>
-
 ### Distribuição das notas de redação
 
-<br> As notas das redações variam de 0 a 1000 pontos. No gráfico 01, pode-se visualizar por meio do boxPlot e do histograma a média e a distribuição das notas. <br>
+As notas das redações variam de 0 a 1000 pontos. No gráfico 01, pode-se visualizar por meio do boxPlot e do histograma a média e a distribuição das notas. <br>
 
 ```{r label = 'grafico_01'}
-#| fig.cap = "Gráfico 01 - BoxPlot e histograma da distribuição de notas de redação"
+  #| fig.cap = "Gráfico 01 - BoxPlot e histograma da distribuição de notas de redação",
+
 
 # gráfico do boxplot das notas das redações (parte superior da visualização)
 p1_1 <- enem_cidade |> 
@@ -203,7 +210,7 @@ p1_1 <- enem_cidade |>
     x = "",
     y = ""
   )+
-  ggplot2::theme_bw()+
+  ggthemes::theme_map()+ 
   theme_enem()
 
 
@@ -258,36 +265,32 @@ p2 <- tab_classes_notas |>
     x = "Intervalo de notas",
     y = "Frequência (%)"
   )+
-  ggplot2::theme_classic()+
   theme_enem()
 
 p2
 
 ```
 
-<br> No gráfico 02, pode-se observar melhor como as notas de redação se distribuíram entre os valores de 0 a 1000. Os valores mostram o percentual de notas de cada intervalo. Valores maiores indicam a proporção de notas mais comuns.
+<br> 
+
+No gráfico 02, pode-se observar melhor como as notas de redação se distribuíram entre os valores de 0 a 1000. Os valores mostram o percentual de notas de cada intervalo. Valores maiores indicam a proporção de notas mais comuns.
 
 <br>
 
-### Principais problemas que resultam em anulação das redações
+### Principais razões para se atribuir nota 0 (zero) a redação
 
-<br>
+A banca avaliadora atribui nota 0 (zero) de acordo com as seguintes causas:
 
-A banca avaliadora atribui nota 0 (zero) de acordo com as seguintes causas:<br>
-
-1.  Não atendimento ao tipo: a redação que possua outra estrutura textual que não seja a estrutura dissertativo-argumentativo;
-
-2.  Fuga ao tema: a que não atende à proposta solicitada;
-
-3.  Em branco: a que não apresente texto escrito na folha de redação;
-
-4.  Texto insuficiente: a que apresente até 7 linhas, qualquer que seja o conteúdo;
-
-5.  Parte desconectada: a que apresenta parte do texto deliberadamente desconectada com o tema proposto;
-
-6.  Anulada: a que apresenta impropérios, desenhos ou outras formas propositais de anulação;
-
-7.  Cópia Texto Motivador: a cópia de textos motivadores enseja a desconsideração das linhas para efeito de correção e de contagem do número mínimos de linhas, podendo levar à nota 0 no caso de incidência em algum dos motivos citados acima.
+<ul class="a">
+  <li>  Não atendimento ao tipo: a redação que possua outra estrutura textual que não seja a estrutura dissertativo-argumentativo;</li>
+  <li>  Fuga ao tema: a que não atende à proposta solicitada;</li>
+  <li>  Em branco: a que não apresente texto escrito na folha de redação;</li>
+  <li>  Texto insuficiente: a que apresente até 7 linhas, qualquer que seja o conteúdo;</li>
+  <li>  Parte desconectada: a que apresenta parte do texto deliberadamente desconectada com o tema proposto;</li>
+  <li>  Anulada: a que apresenta impropérios, desenhos ou outras formas propositais de anulação, números ou sinais gráficos sem função clara em qualquer parte do texto ou  em qualquer parte da folha de redação; com assinatura, nome, iniciais, apelido, codinome ou rubrica fora do local devidamente designado para a assinatura do participante; com texto predominantemente ou integralmente escrito em língua estrangeira; ou com texto ilegível, que impossibilite sua leitura por dois avaliadores independentes e</li>
+  <li>  Cópia Texto Motivador: a que contenha cópia de texto(s)da prova de redação e/ou do caderno de questões sem que haja pelo menos 8 linhas de produção própria do participante;</li>
+  
+</ul>
 
 <br>
 
@@ -305,7 +308,8 @@ p3 <- redacoes_com_problemas |>
   ggplot2::ggplot(ggplot2::aes(x = qte,
                                y = tp_status_redacao,
                                label = qte))+
-  ggplot2::geom_col(fill = "#70A288")+
+  ggplot2::geom_col(fill = "#70A288",
+                    color = "#000000")+
   ggplot2::geom_label(                                                                 # labels
     size = 5,
     color = "#000000",
@@ -317,7 +321,6 @@ p3 <- redacoes_com_problemas |>
     x = "quantidades",
     y = "razões"
   ) +
-  ggplot2::theme_classic()+
   theme_enem()
 
 p3
@@ -340,19 +343,17 @@ motivo_maior_redacoes_com_problemas <- redacoes_com_problemas |>
 
 ### Notas médias das competências
 
-<br>
-
 A nota da redação é composta por cinco competências com notas que variam de 0 a 200 pontos. A soma das seguintes competências resulta na nota final da redação do aluno.
 
-1.  Demonstrar domínio da modalidade escrita formal da Língua Portuguesa;
+<ul class="a">
 
-2.  Compreender a proposta de redação e aplicar conceitos das várias áreas de conhecimento para desenvolver o tema, dentro dos limites estruturais do texto dissertativo-argumentativo em prosa;
+<li>  Demonstrar domínio da modalidade escrita formal da Língua Portuguesa;</li>
+<li>  Compreender a proposta de redação e aplicar conceitos das várias áreas de conhecimento para desenvolver o tema, dentro dos limites estruturais do texto dissertativo-argumentativo em prosa;</li>
+<li>  Selecionar, relacionar, organizar e interpretar informações, fatos, opiniões e argumentos em defesa de um ponto de vista;</li>
+<li>  Demonstrar conhecimento dos mecanismos linguísticos necessários para a construção da argumentação;</li>
+<li>  Elaborar proposta de intervenção para o problema abordado, respeitando os direitos humanos.</li>
 
-3.  Selecionar, relacionar, organizar e interpretar informações, fatos, opiniões e argumentos em defesa de um ponto de vista;
-
-4.  Demonstrar conhecimento dos mecanismos linguísticos necessários para a construção da argumentação;
-
-5.  Elaborar proposta de intervenção para o problema abordado, respeitando os direitos humanos.
+</ul>
 
 <br>
 
@@ -428,8 +429,7 @@ p4 <- medias_comp_redacao |>                                                    
     subtitle = "A nota da redação é definida pela soma dos componentes",
     x = "notas dos componentes",
     y = "média das notas"
-  ) +
-  ggplot2::theme_classic() +                                                             # tema
+  ) +                                                         # tema
   ggplot2::theme(
     legend.position = "none"
   ) +
@@ -572,12 +572,19 @@ enem_redacao_historico_notas900 <- enem |>
   dplyr::group_by(nu_ano) |> 
   dplyr::summarise(qtde = dplyr::n())
 
+enem_notas_zero <- enem |>
+  dplyr::filter(no_municipio_prova == params$cidade & nu_nota_redacao == 0) |>
+  dplyr::select(nu_nota_redacao, nu_ano) |>
+  dplyr::group_by(nu_ano) |>
+  dplyr::summarise(qtde = dplyr::n())
 
 ```
 
 
 ```{r label = 'gráfico_06'}
-#| fig.cap = "Gráfico 06 - Gráfico de linhas das médias e notas acima de 900"
+#| fig.cap = "Gráfico 06 - Gráfico de linhas - evolução das notas",
+#| fig.height = 10
+
 p6_1 <- enem_redacao_historico |> 
   ggplot2::ggplot()+
   ggplot2::aes(x = nu_ano,
@@ -591,7 +598,6 @@ p6_1 <- enem_redacao_historico |>
     fill = "#70A288",
     size = 6
   )+
-  ggplot2::theme_classic()+
   theme_enem()+
   ggplot2::labs(
     title = "Médias das notas"
@@ -610,14 +616,40 @@ p6_2 <- enem_redacao_historico_notas900 |>
     fill = "#70A288",
     size = 6
   )+
-  ggplot2::theme_classic()+
   theme_enem()+
   ggplot2::labs(
     title = "Notas acima de 900"
   ) 
+
+
+p6_3 <- enem_notas_zero |> 
+  ggplot2::ggplot()+
+  ggplot2::aes(x = nu_ano,
+               y = qtde)+
+  ggplot2::geom_line(
+    color = "grey"
+  )+
+  ggplot2::geom_point(
+    shape = 21,
+    color = "black",
+    fill = "#70A288",
+    size = 6
+  )+
+  theme_enem()+
+  ggplot2::labs(
+    title = "Notas zero"
+  )
+  
+
 library(patchwork)
-p6 <-  p6_1 + p6_2
+
+p6 <-  (p6_3 + p6_2) / p6_1
 
 p6
 ```
 
+<br>
+
+## Prova de Ciências da Natureza
+
+<br>

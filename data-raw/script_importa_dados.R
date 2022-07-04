@@ -249,6 +249,8 @@ importa_microdados <- function(ano) {
 
 # IMPORTAR DADOS DOS ANOS  ---------------------------------------------------------------
 
+importa_microdados(2017)
 importa_microdados(2018)
 importa_microdados(2019)
 importa_microdados(2020)
+

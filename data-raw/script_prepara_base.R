@@ -133,8 +133,10 @@ preparacao_base <- function(ano,uf) {
 
 # PREPARAÇÃO DAS BASES -------------------------------------------------------------------
 
+preparacao_base(2017, "PR")
 preparacao_base(2018, "PR")
-preparacao_base(2018, "PR")
-preparacao_base(2018, "PR")
+preparacao_base(2019, "PR")
+preparacao_base(2020, "PR")
+preparacao_base(2021, "PR")
 
 

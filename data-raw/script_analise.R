@@ -26,13 +26,17 @@ enem_cidade <- enem |>
 p1_1 <- enem_cidade |>
   dplyr::select(nu_nota_redacao) |>
   ggplot2::ggplot(ggplot2::aes(x = nu_nota_redacao))+
-  ggplot2::geom_boxplot()+
+  ggplot2::geom_boxplot(
+    fill = "#70A288",
+    color = "#000000"
+  )+
   ggplot2::labs(
     x = "",
     y = ""
   )+
-  ggplot2::theme_classic()+
+  ggthemes::theme_igray()+
   theme_enem()
+p1_1
 
 ## gráfico_01_2 - Histograma das notas --------------------------------------------------------
 p1_2 <- enem_cidade |>
@@ -298,7 +302,7 @@ p6_1 <- enem_redacao_historico |>
   ggplot2::theme_classic()+
   theme_enem()+
   ggplot2::labs(
-    title = "Evolução das médias das redações"
+    title = "Médias das redações"
   )
 
 p6_1
@@ -321,13 +325,36 @@ p6_2 <- enem_redacao_historico_notas900 |>
   ggplot2::theme_classic()+
   theme_enem()+
   ggplot2::labs(
-    title = "Quantidade de notas acima de 900"
+    title = "Notas acima de 900"
   )
+
+
+# GRÁFICO QUANTIDADE NOTAS ZERO ----------------------------------------------------------
+
+enem_notas_zero <- enem |>
+  dplyr::filter(no_municipio_prova == "Curitiba" & nu_nota_redacao == 0) |>
+  dplyr::select(nu_nota_redacao, nu_ano) |>
+  dplyr::group_by(nu_ano) |>
+  dplyr::summarise(qtde = dplyr::n())
+
+p6_3 <- enem_notas_zero |>
+  ggplot2::ggplot()+
+  ggplot2::aes(x = nu_ano,
+               y = qtde)+
+  ggplot2::geom_line()+
+  ggplot2::geom_point()+
+  ggplot2::theme_classic()+
+  theme_enem()+
+  ggplot2::labs(
+    title = "Notas zero"
+  )
+
+p6_3
 
 library(patchwork)
 
 
-p6 <-  p6_1 + p6_2
+p6 <-  p6_1 + p6_2 / p6_3
 
 p6
 
@@ -339,15 +366,98 @@ library(sf)
 
 dados_geobr <- geobr::read_municipality("PR")
 
-# código ibge do município de Curitiba = 4106902
-
 
 mun <- read_municipality(code_muni=4106902, year=2017)
 
 dados_geobr |>
-  dplyr::filter(substr(name_muni,1,1) %in% c("C")) |>
+  dplyr::filter(name_muni == "Foz Do Iguaçu") |>
   ggplot2::ggplot()+
-  ggplot2::geom_sf(data = dados_geobr)+
-  ggplot2::geom_sf(fill = "lightblue")
+  ggplot2::geom_sf(data = dados_geobr,
+                   fill = "#414073",
+                   color = "#000000",
+                   size = .1)+
+  ggplot2::geom_sf(fill = "red")+
+  ggspatial::annotation_north_arrow(location = "br")+
+  ggplot2::theme_classic()+
+  theme_enem()
 
 
+# Gráfico de densidade das notas
+
+
+
+
+p7_1 <- enem_cidade |>
+  dplyr::select(nu_nota_cn) |>
+  ggplot2::ggplot()+
+  ggplot2::geom_histogram(ggplot2::aes(nu_nota_cn),
+                          alpha = 0.2)+
+  ggplot2::geom_density(ggplot2::aes(nu_nota_cn),
+                        fill = "#112446",
+                        alpha = 1)+
+  ggplot2::theme_bw()+
+  ggplot2::labs(
+    title = "Ciências Naturais",
+    x = "nota",
+    y = "densidade"
+  )+
+  theme_enem_fundo_branco()
+
+p7_2 <- enem_cidade |>
+  dplyr::select(nu_nota_ch) |>
+  ggplot2::ggplot()+
+  ggplot2::geom_density(ggplot2::aes(nu_nota_ch),
+                      fill = "#E54B4B",
+                      alpha = 0.2)+
+  ggplot2::theme_bw()+
+  ggplot2::labs(
+    title = "Ciências Humanas",
+    x = "nota",
+    y = "densidade"
+  )+
+  theme_enem_fundo_branco()
+
+p7_3 <- enem_cidade |>
+  dplyr::select(nu_nota_lc) |>
+  ggplot2::ggplot()+
+  ggplot2::geom_density(ggplot2::aes(nu_nota_lc),
+                      fill = "#D6E3F8",
+                      alpha = 0.3)+
+  ggplot2::theme_bw()+
+  ggplot2::labs(
+    title = "Linguagens e Códigos",
+    x = "nota",
+    y = "densidade"
+  )+
+  theme_enem_fundo_branco()
+
+p7_4 <- enem_cidade |>
+  dplyr::select(nu_nota_mt) |>
+  ggplot2::ggplot()+
+  ggplot2::geom_density(ggplot2::aes(nu_nota_mt),
+                      fill = "#FED766",
+                      alpha = 0.3)+
+  ggplot2::theme_bw()+
+  ggplot2::labs(
+    title = "Matemática",
+    x = "nota",
+    y = "densidade"
+  )+
+  theme_enem_fundo_branco()
+
+p7_5 <- enem_cidade |>
+  dplyr::select(nu_nota_redacao) |>
+  ggplot2::ggplot()+
+  ggplot2::geom_density(ggplot2::aes(nu_nota_redacao),
+                        fill = "#26A96C",
+                        alpha = 0.3)+
+  ggplot2::theme_bw()+
+  ggplot2::labs(
+    title = "Redação",
+    x = "nota",
+    y = "densidade"
+  )+
+  theme_enem_fundo_branco()
+
+library(patchwork)
+(p7_1 + p7_2)/ (p7_3 + p7_4) / p7_5
