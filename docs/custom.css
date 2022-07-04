@@ -1,45 +1,47 @@
-/*Especificação gerais do body */
-body{
+body{                                                         /*Especificação gerais do body */
     font-size: 13pt;
+    background-color: #FFFFFF;
 }
 
-/*Especificação dos títulos */
-h1, h2, h3, h4, h5, h6 {
+h1{                                         /*Especificação dos títulos */
+    color: white;
+    text-align: left;
+    text-shadow: 1px 1px 0px black, 0 0 25px lightblue, 0 0 5px blue;
+}
+
+h2, h3, h4, h5, h6 {                                         /*Especificação dos títulos */
     color: #145C9E;
+    text-align: left;
 }
 
-/*Especificação dos parágrafos */
-p{
-    text-align :justify;                              /*opções: justify, right, left, center */
-    margin-left: 20px;
+
+p{                                                            /*Especificação dos parágrafos */
+    text-align : justify;                              /*opções: justify, right, left, center */
+    text-indent: 3em;
+    line-height: 2;
 }
+
+#para1{
+    color:blue;
+}
+
+.colortext{
+    color:red;
+}
+
+div p{
+    text-align : justify;
+}
+
 
 /*Especificação da classe center usada para centralizar textos de seletores */
 .center{
     text-align: center;
 }
 
-/* Especificação para tabelas*/
-
-table{
-    width: 100%;
-    color: #145C9E;
-}
-
-th{
-    height: 50px;
-    color: #145C9E;
-}
-
-td{
-    height: 50px;
-}
-
-th, td{
-    border-bottom: 1px solid #ddd
-}
-
-
 ul.a{
-    list-style-position: oustide;
+    list-style-type: square;
+    list-style-position: outside;
+    text-align: justify;
+    line-height: 2.2;
 }
