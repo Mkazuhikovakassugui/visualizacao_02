@@ -1,7 +1,7 @@
 theme_enem <- function(variables) {
     ggplot2::theme(                                                      # customização do tema
-        panel.background = ggplot2::element_rect(fill = "#D6F3FF"),
-        plot.background = ggplot2::element_rect(fill = "#D6F3FF"),
+        panel.background = ggplot2::element_rect(fill = "#EBF9FF"),
+        plot.background = ggplot2::element_rect(fill = "#EBF9FF"),
         plot.margin = ggplot2::unit(c(1, 2, 1, 1), "cm"),                              # título
         plot.title = ggplot2::element_text(
             size = 24,
