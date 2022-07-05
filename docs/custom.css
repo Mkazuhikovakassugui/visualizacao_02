@@ -6,7 +6,7 @@ body{                                                         /*Especificação 
 h1{                                         /*Especificação dos títulos */
     color: white;
     text-align: left;
-    text-shadow: 1px 1px 0px black, 0 0 25px lightblue, 0 0 5px blue;
+    text-shadow: 1px 1px 0px black, 0 0 50px lightblue, 0 0 7px green;
 }
 
 h2, h3, h4, h5, h6 {                                         /*Especificação dos títulos */
@@ -21,22 +21,14 @@ p{                                                            /*Especificação 
     line-height: 2;
 }
 
-#para1{
-    color:blue;
-}
-
-.colortext{
-    color:red;
-}
-
-div p{
-    text-align : justify;
+p.a{
+    text-align: left;
 }
 
 
 /*Especificação da classe center usada para centralizar textos de seletores */
 .center{
-    text-align: center;
+    text-indent: 0em;
 }
 
 ul.a{
