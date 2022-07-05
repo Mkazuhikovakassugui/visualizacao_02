@@ -124,7 +124,7 @@ p2 <- medias_comp_redacao |>                                                    
     label = round(medias, 2)
   ) +
   ggplot2::geom_col(
-    fill = "#576BC7"
+    fill =notas_comp_redacao
   ) +
   ggplot2::geom_label(                                                                 # labels
     size = 4,
@@ -188,7 +188,6 @@ p3 <- comp_redacao_long |>
   ggplot2::ggplot(ggplot2::aes(competencias, notas_comp, fill = competencias))+
   ggplot2::geom_violin(width = 0.6)+
   ggplot2::geom_boxplot(width = 0.1, color = "black", alpha = 0.2)+
-  ggplot2::geom_jitter(color="black", size=0.4, alpha=0.05) +
   ggplot2::labs(
     title = "Violin e boxplot das competências",
     x = "Competências",
@@ -228,8 +227,9 @@ p4 <- tab_classes_notas |>
   ggplot2::ggplot()+
   ggplot2::aes(x= Var1,
                y = Freq,
+               fill = Var1,
                label = round(Freq, 3))+
-  ggplot2::geom_col(fill = "#576BC7") +
+  ggplot2::geom_col() +
   ggplot2::geom_label(                                                                 # labels
     size = 4,
     color = "#576BC7",
@@ -242,7 +242,9 @@ p4 <- tab_classes_notas |>
     y = "Frequência (%)"
   )+
   ggplot2::theme_classic()+
-  theme_enem()
+  theme_enem()+
+  ggplot2::scale_color_viridis_d(option = "E")+
+  ggplot2::theme(legend.position = "none")
 
 p4
 
@@ -296,15 +298,28 @@ dplyr::glimpse(enem_redacao_historico)
 p6_1 <- enem_redacao_historico |>
   ggplot2::ggplot()+
   ggplot2::aes(x = nu_ano,
-               y = media)+
-  ggplot2::geom_line()+
-  ggplot2::geom_point()+
-  ggplot2::theme_classic()+
+               y = media,
+               label = round(media,2))+
+  ggplot2::geom_line(
+    color = "grey"
+  )+
+  ggplot2::geom_point(
+    shape = 21,
+    color = "black",
+    fill = "#70A288",
+    size = 6
+  )+
+  ggplot2::geom_text(
+    nudge_y = 6,
+    size = 4
+  )+
   theme_enem()+
   ggplot2::labs(
-    title = "Médias das redações"
-  )
-
+    title = "Médias das notas",
+    x = "Ano",
+    y = "Média"
+  )+
+  ggplot2::scale_y_continuous(limits = c(550, 620))
 p6_1
 
 
@@ -319,15 +334,29 @@ enem_redacao_historico_notas900 <- enem |>
 p6_2 <- enem_redacao_historico_notas900 |>
   ggplot2::ggplot()+
   ggplot2::aes(x = nu_ano,
-               y = qtde)+
-  ggplot2::geom_line()+
-  ggplot2::geom_point()+
-  ggplot2::theme_classic()+
+               y = qtde,
+               label = qtde)+
+  ggplot2::geom_line(
+    color = "grey"
+  )+
+  ggplot2::geom_point(
+    shape = 21,
+    color = "black",
+    fill = "#70A288",
+    size = 6
+  )+
+  ggplot2::geom_text(
+    nudge_y = 100,
+    size = 5
+  )+
   theme_enem()+
   ggplot2::labs(
-    title = "Notas acima de 900"
+    title = "Notas acima de 900",
+    x = "Ano",
+    y = "Quantidade"
   )
 
+p6_2
 
 # GRÁFICO QUANTIDADE NOTAS ZERO ----------------------------------------------------------
 
@@ -352,7 +381,6 @@ p6_3 <- enem_notas_zero |>
 p6_3
 
 library(patchwork)
-
 
 p6 <-  p6_1 + p6_2 / p6_3
 
@@ -384,17 +412,12 @@ dados_geobr |>
 
 # Gráfico de densidade das notas
 
-
-
-
 p7_1 <- enem_cidade |>
-  dplyr::select(nu_nota_cn) |>
+  dplyr::select(nu_nota_cn, nu_nota_ch, nu_nota_lc, nu_nota_mt) |>
   ggplot2::ggplot()+
-  ggplot2::geom_histogram(ggplot2::aes(nu_nota_cn),
-                          alpha = 0.2)+
   ggplot2::geom_density(ggplot2::aes(nu_nota_cn),
-                        fill = "#112446",
-                        alpha = 1)+
+                        fill = "#E54B4B",
+                        alpha = 0.2)+
   ggplot2::theme_bw()+
   ggplot2::labs(
     title = "Ciências Naturais",
@@ -461,3 +484,49 @@ p7_5 <- enem_cidade |>
 
 library(patchwork)
 (p7_1 + p7_2)/ (p7_3 + p7_4) / p7_5
+
+# GRÁFICO CIÊNCIAS DA NATUREZA
+
+# Construir a visualização composta por dois gŕaficos por meio da biblioteca patchwork
+# Boxplot para observarmos principalmente a média, notas mínimas e notas máximas
+# Histogram para observarmos a distribuição das notas das redações
+
+## gráfico_01_1 - boxplot das notas -----------------------------------------------------------
+p8_1 <- enem_cidade |>
+  dplyr::select(nu_nota_cn) |>
+  ggplot2::ggplot(ggplot2::aes(x = nu_nota_cn))+
+  ggplot2::geom_boxplot(
+    fill = "#70A288",
+    alpha = 0.4)+
+  ggplot2::labs(
+    title = "Distribuição das notas de redação ",
+    x = "",
+    y = ""
+  )+
+  ggplot2::theme_classic()+
+  theme_enem()+
+  ggplot2::theme(
+    axis.ticks.x = ggplot2::element_blank(),
+    axis.line.x = ggplot2::element_blank(),
+    axis.text.x = ggplot2::element_blank()
+  )
+
+# gráfico do histograma das notas das redações (parte inferior da visualização)
+p8_2 <- enem_cidade |>
+  dplyr::select(nu_nota_cn) |>
+  ggplot2::ggplot(ggplot2::aes(x = nu_nota_cn))+
+  ggplot2::geom_histogram(fill = "#70A288",
+                          color = "#000000",
+                          alpha = 0.4)+
+  ggplot2::labs(
+    x = "Notas",
+    y = ""
+  )+
+  ggplot2::theme_classic()+
+  theme_enem()
+
+library(patchwork)                            # uso do pacote patchwork para união dos gráficos
+
+# disposição dos gráficos
+p8 <- p8_1/p8_2
+p8
