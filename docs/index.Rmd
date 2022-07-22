@@ -66,7 +66,7 @@ total_alunos_municipio <- enem_cidade |> # total de alunos classificados no muni
 
 # Informações Gerais
 
-### Dados do exame
+### Dados do Exame
 
 | Município: `r params$cidade`                | Estado: `r params$estado` |
 |:--------------------------------------------|--------------------------:|
@@ -100,13 +100,8 @@ dados_geobr |>
   ggplot2::geom_sf(ggplot2::aes(fill = name_muni)) +
   ggspatial::annotation_north_arrow(location = "tr") +
   ggplot2::theme_classic() +
-  theme_enem() +
   ggplot2::theme(
-    legend.title = ggplot2::element_blank(),
-    legend.background = ggplot2::element_rect(
-      fill = "#EBF9FF",
-      colour = "#EBF9FF"
-    )
+    legend.title = ggplot2::element_blank()
   )
 
 ```
@@ -154,7 +149,7 @@ estado_federacao <- dplyr::case_when(
 )
 ```
 
-# Prova de redação
+# Prova de Redação
 
 ```{r label = 'notas_máximas_redacao_quantidade_de_zeros_média_município'}
 #| echo = FALSE
@@ -201,7 +196,7 @@ tab_classes_notas <- table(cut(enem_cidade$nu_nota_redacao,
 
 ```
 
-### Distribuição das notas de redação
+### Distribuição das Notas de Redação
 As notas das redações variam de 0 a 1000 pontos. No gráfico 01, pode-se visualizar por meio do boxPlot e do histograma a média e a distribuição das notas. <br>
 
 
@@ -225,7 +220,7 @@ p1_1 <- enem_cidade |>
     y = ""
   ) +
   ggplot2::theme_classic() +
-  theme_enem() +
+  theme_enem_fundo_branco() +
   ggplot2::theme(
     axis.ticks.x = ggplot2::element_blank(),
     axis.line.x = ggplot2::element_blank(),
@@ -246,7 +241,7 @@ p1_2 <- enem_cidade |>
     y = ""
   ) +
   ggplot2::theme_classic() +
-  theme_enem()
+  theme_enem_fundo_branco()
 
 
 # disposição dos gráficos
@@ -261,7 +256,7 @@ Entre os alunos que realizaram o exame na cidade de **`r params$cidade`**, a mai
 
 <br>
 
-### Distribuição das notas das redações por intervalo de classes.
+### Distribuição das Notas das Redações por Intervalo de Classes.
 
 ```{r label = 'grafico_02'}
 #| fig.cap = "Gráfico 02 - Diagrama de colunas da distribuição de notas por intervalos"
@@ -292,7 +287,7 @@ p2 <- tab_classes_notas |>
   ) +
   ggplot2::theme(legend.position = "none") +
   ggplot2::scale_colour_viridis_d(option = "E") +
-  theme_enem()
+  theme_enem_fundo_branco()
 
 p2
 
@@ -304,7 +299,7 @@ No gráfico 02, pode-se observar melhor como as notas de redação se distribuí
 
 <br>
 
-### Principais razões para se atribuir nota 0 (zero) a redação
+### Principais Razões para se Atribuir Nota 0 (zero) a Redação
 
 A banca avaliadora atribui nota 0 (zero) de acordo com as seguintes causas:
 
@@ -356,7 +351,7 @@ p3 <- redacoes_com_problemas |>
   ggplot2::scale_x_continuous(limits = c(0, max(redacoes_com_problemas$qte) + 6)) +
   ggplot2::scale_color_viridis_d(option = "E") +
   ggplot2::theme(legend.position = "none") +
-  theme_enem()
+  theme_enem_fundo_branco()
 
 p3
 
@@ -378,7 +373,7 @@ motivo_maior_redacoes_com_problemas <- redacoes_com_problemas |>
 
 <br>
 
-### Notas médias das competências
+### Notas Médias das Competências
 
 A nota da redação é composta por cinco competências com notas que variam de 0 a 200 pontos. A soma das seguintes competências resulta na nota final da redação do aluno.
 
@@ -471,7 +466,7 @@ p4 <- medias_comp_redacao |> # base
   ggplot2::theme(
     legend.position = "none"
   ) +
-  theme_enem()+
+  theme_enem_fundo_branco()+
   ggplot2::scale_fill_viridis_d(option = "E")
 
 p4
@@ -528,7 +523,7 @@ Os alunos obtiveram o melhor desempenho na `r melhor_componente_redacao[2]` da r
 
 <br>
 
-### Distribuição das notas por competências
+### Distribuição das Notas por Competências
 
 ```{r label = 'base_do_grafico_05'}
 #| echo = FALSE
@@ -586,7 +581,7 @@ p5 <- comp_redacao_long |>
     x = "Competências",
     y = "Notas"
   ) +
-  theme_enem() +
+  theme_enem_fundo_branco() +
   ggplot2::theme(legend.position = "none")
 
 p5
@@ -598,7 +593,7 @@ No gráfico acima, pode-se observar a densidade de distribuição das notas por 
 
 <br>
 
-### Evolução das notas das redações nos últimos anos
+### Evolução das Notas das Redações nos Últimos Anos
 
 ```{r label = 'base_grafico_06'}
 #| echo = FALSE
@@ -650,7 +645,7 @@ p6_1 <- enem_redacao_historico |>
     vjust = -2,
     size = 5
   ) +
-  theme_enem() +
+  theme_enem_fundo_branco() +
   ggplot2::labs(
     title = "Médias das notas",
     x = "Ano",
@@ -680,7 +675,7 @@ p6_2 <- enem_redacao_historico_notas900 |>
     hjust = -1,
     size = 5
   ) +
-  theme_enem() +
+  theme_enem_fundo_branco() +
   ggplot2::labs(
     title = "Notas acima de 900",
     x = "Ano",
@@ -711,7 +706,7 @@ p6_3 <- enem_notas_zero |>
     hjust = -1,
     size = 5
   ) +
-  theme_enem() +
+  theme_enem_fundo_branco() +
   ggplot2::labs(
     title = "Notas zero",
     x = "Ano",
@@ -737,7 +732,7 @@ A prova de linguagens possui 45 questões, sendo 5 de língua estrangeira.
 
 <br>
 
-### Distribuição das notas de Linguagens e Códigos
+### Distribuição das Notas de Linguagens e Códigos
 
 ```{r label = 'gráfico_07'}
 #| fig.align = "center",
@@ -761,7 +756,7 @@ p7_1 <- enem_cidade |>
     y = ""
   ) +
   ggplot2::theme_classic() +
-  theme_enem() +
+  theme_enem_fundo_branco() +
   ggplot2::theme(
     axis.ticks.x = ggplot2::element_blank(),
     axis.line.x = ggplot2::element_blank(),
@@ -781,7 +776,7 @@ p7_2 <- enem_cidade |>
     y = ""
   ) +
   ggplot2::theme_classic() +
-  theme_enem()
+  theme_enem_fundo_branco()
 
 library(patchwork) # uso do pacote patchwork para união dos gráficos
 
@@ -856,7 +851,7 @@ As notas variam de 0 a 1000. A maior nota obtida no município de `r params$cida
 ### Distribuição das Notas de Linguagens e Códigos  por Intervalo de Classes.
 
 ```{r label = 'grafico_08'}
-#| fig.cap = "Gráfico_08_diagrama_colunas_notas_LC_por_intervalos"
+#| fig.cap = "Gráfico 08 - gráfico de colunas das notas de linguagens e códigos por intervalos"
 
 p8 <- tab_classes_notas_lc |>
   ggplot2::ggplot() +
@@ -884,7 +879,7 @@ p8 <- tab_classes_notas_lc |>
   ) +
   ggplot2::scale_fill_viridis_d(option = "E") +
   ggplot2::theme(legend.position = "none") +
-  theme_enem()
+  theme_enem_fundo_branco()
 
 p8
 
@@ -947,7 +942,7 @@ p9 <- notas_tipo_escola_lc |>
     limits = c(0, 700),
     breaks = seq(0, 700, 100)
   ) +
-  theme_enem()
+  theme_enem_fundo_branco()
 
 p9
 
@@ -965,7 +960,7 @@ O gráfico 9 apresenta as notas médias por tipo de dependência administrativa 
 
 <br>
 
-```{r label = 'base_grafico_10_a'}
+```{r label = 'base_grafico_10'}
 #| echo = FALSE
 
 p_10 <- enem_cidade |>
@@ -990,11 +985,10 @@ p_10$label_position <- (p_10$ymax + p_10$ymin)/2
 p_10$label <- paste0(p_10$tp_lingua, "\n value: ", p_10$Freq)
 
 
-
 ```
 
 ```{r echo=FALSE}
-#| fig.cap = "Gráfico 7_a - Gráfico donnut - línguas estrangeiras",
+#| fig.cap = "Gráfico 10 - Gráfico donnut - línguas estrangeiras",
 #| fig.align = "center",
 #| fig.height = 8
 
@@ -1013,11 +1007,8 @@ p_10 |>
   ggplot2::theme_void()+
   ggplot2::theme(
     legend.position = "none",
-    panel.background = ggplot2::element_rect(fill = "#EBF9FF"),
+    panel.background = ggplot2::element_rect(fill = "#FFFFFF"),
     plot.background = ggplot2::element_rect(fill = "#FFFFFF"))
-
-
-
 
 ```
 
@@ -1029,9 +1020,9 @@ No gráfico 10, tem-se as quantidades de alunos e suas respectivas escolhas para
 
 <br>
 
-### Evolução das notas de Ciências da Natureza nos últimos anos 
+### Evolução das notas de Linguagens e Códigos nos últimos anos 
 
-```{r label = 'base_grafico_10'}
+```{r label = 'base_grafico_11'}
 #| echo = FALSE
 
 ## filtrar a base para a cidade
@@ -1044,11 +1035,11 @@ enem_lc_historico <- enem |>
 ```
 
 
-```{r label = 'gráfico_10'}
-#| fig.cap = "Gráfico 10 - Gráfico de linhas - evolução das notas de linguagens e códigos",
+```{r label = 'gráfico_11'}
+#| fig.cap = "Gráfico 11 - Gráfico de linhas - evolução das notas de linguagens e códigos",
 #| fig.height = 10,
 
-p10 <- enem_lc_historico |>
+p11 <- enem_lc_historico |>
   ggplot2::ggplot() +
   ggplot2::aes(
     x = nu_ano,
@@ -1066,7 +1057,7 @@ p10 <- enem_lc_historico |>
     vjust = -2,
     size = 5
   ) +
-  theme_enem() +
+  theme_enem_fundo_branco() +
   ggplot2::labs(
     title = "Médias das notas",
     subtitle = "Linguagens e Códigos e suas Tecnologias",
@@ -1078,7 +1069,7 @@ p10 <- enem_lc_historico |>
     max(enem_lc_historico$media) + 50
   ))
 
-p10
+p11
 
 ```
 
@@ -1089,16 +1080,16 @@ p10
 ### Distribuição das notas de Ciências da Natureza
 
 
-```{r label = 'gráfico_11_cn'}
+```{r label = 'gráfico_12'}
 #| fig.align = "center",
-#| fig.cap = "Gráfico 11 - BoxPlot e histograma da distribuição de notas de ciências da natureza",
+#| fig.cap = "Gráfico 12 - BoxPlot e histograma da distribuição de notas de ciências da natureza",
 
 # Construir a visualização composta por dois gŕaficos por meio da biblioteca patchwork
 # Boxplot para observarmos principalmente a média, notas mínimas e notas máximas
 # Histogram para observarmos a distribuição das notas das redações
 
 ## gráfico_11_1 - boxplot das notas 
-p11_1 <- enem_cidade |>
+p12_1 <- enem_cidade |>
   dplyr::select(nu_nota_cn) |>
   ggplot2::ggplot(ggplot2::aes(x = nu_nota_cn)) +
   ggplot2::geom_boxplot(
@@ -1111,14 +1102,14 @@ p11_1 <- enem_cidade |>
     y = ""
   ) +
   ggplot2::theme_classic() +
-  theme_enem() +
+  theme_enem_fundo_branco() +
   ggplot2::theme(
     axis.ticks.x = ggplot2::element_blank(),
     axis.line.x = ggplot2::element_blank(),
     axis.text.x = ggplot2::element_blank()
   )
 # gráfico do histograma das notas das redações (parte inferior da visualização)
-p11_2 <- enem_cidade |>
+p12_2 <- enem_cidade |>
   dplyr::select(nu_nota_cn) |>
   ggplot2::ggplot(ggplot2::aes(x = nu_nota_cn)) +
   ggplot2::geom_histogram(
@@ -1131,13 +1122,13 @@ p11_2 <- enem_cidade |>
     y = ""
   ) +
   ggplot2::theme_classic() +
-  theme_enem()
+  theme_enem_fundo_branco()
 
 library(patchwork) # uso do pacote patchwork para união dos gráficos
 
 # disposição dos gráficos
-p11 <- p11_1 / p11_2
-p11
+p12 <- p12_1 / p12_2
+p12
 
 ```
 
@@ -1203,12 +1194,12 @@ As notas variam de 0 a 1000. A maior nota obtida no município de `r params$cida
 
 <br>
 
-### Distribuição das notas de Ciências da Natureza por intervalo de classes.
+### Distribuição das Notas de Ciências da Natureza por Intervalo de Classes.
 
-```{r label = 'grafico_012'}
-#| fig.cap = "Gráfico_09_diagrama_colunas_notas_CN_por_intervalos"
+```{r label = 'grafico_013'}
+#| fig.cap = "Gráfico 13 - gráfico de colunas das notas de ciências da naturez por intervalo."
 
-p12 <- tab_classes_notas_cn |>
+p13 <- tab_classes_notas_cn |>
   ggplot2::ggplot() +
   ggplot2::aes(
     x = Var1,
@@ -1234,19 +1225,19 @@ p12 <- tab_classes_notas_cn |>
   ) +
   ggplot2::scale_fill_viridis_d(option = "E") +
   ggplot2::theme(legend.position = "none") +
-  theme_enem()
+  theme_enem_fundo_branco()
 
-p12
+p13
 
 ```
 
 <br>
 
-No gráfico 09, pode-se visualizar como as notas desta área de conhecimento se distribuíram por intervalos de notas. Perceba que **`r round(sum(maiores_classes_notas_cn["Freq"]),3)`%** dos participante(s), ou seja, **`r format((sum(maiores_classes_notas_cn["Freq"]) * total_alunos_municipio)/100, scientific = FALSE)`** aluno(s) obtiveram notas nos intervalos **`r maiores_classes_notas_cn[["Var1"]][2]`** e **`r maiores_classes_notas_cn[["Var1"]][1]`**. Com relação às menores notas, tem-se que  **`r round(menores_classes_notas_cn["Freq"],3)`%** ou **`r (menores_classes_notas_cn["Freq"] * total_alunos_municipio)/100`** aluno(s) obtiveram notas no intervalo de **`r menores_classes_notas_cn[["Var1"]]`**.
+No gráfico 13, pode-se visualizar como as notas desta área de conhecimento se distribuíram por intervalos de notas. Perceba que **`r round(sum(maiores_classes_notas_cn["Freq"]),3)`%** dos participante(s), ou seja, **`r format((sum(maiores_classes_notas_cn["Freq"]) * total_alunos_municipio)/100, scientific = FALSE)`** aluno(s) obtiveram notas nos intervalos **`r maiores_classes_notas_cn[["Var1"]][2]`** e **`r maiores_classes_notas_cn[["Var1"]][1]`**. Com relação às menores notas, tem-se que  **`r round(menores_classes_notas_cn["Freq"],3)`%** ou **`r (menores_classes_notas_cn["Freq"] * total_alunos_municipio)/100`** aluno(s) obtiveram notas no intervalo de **`r menores_classes_notas_cn[["Var1"]]`**.
 
 <br>
 
-### Médias das notas por dependência administrativa
+### Médias das Notas por Dependência Administrativa
 
 ```{r label = 'base_grafico_medias_dep_adm_cn'}
 #| echo = FALSE
@@ -1261,10 +1252,10 @@ notas_tipo_escola <- enem_cidade |>
 ```
 
 ```{r label = 'gráfico_medias_dependencia_adm'}
-#| fig.cap = "Gráfico 10 - Gráfico de colunas - médias por dependência administrativa na prova de Ciências da Natureza",
+#| fig.cap = "Gráfico 14 - Gráfico de colunas - médias por dependência administrativa na prova de Ciências da Natureza",
 #| fig.align = "center"
 
-p13 <- notas_tipo_escola |>
+p14 <- notas_tipo_escola |>
   ggplot2::ggplot() +
   ggplot2::aes(
     x = forcats::fct_reorder(
@@ -1297,9 +1288,9 @@ p13 <- notas_tipo_escola |>
     limits = c(0, 700),
     breaks = seq(0, 700, 100)
   ) +
-  theme_enem()
+  theme_enem_fundo_branco()
 
-p13
+p14
 
 ```
 
@@ -1309,9 +1300,9 @@ São quatro os tipos de dependência administrativa: estadual, municipal, federa
 
 O gráfico 10 apresenta as notas médias por tipo de dependência administrativa existente no município de `r params$cidade`.
 
-### Evolução das notas de Ciências da Natureza nos últimos anos 
+### Evolução das Notas de Ciências da Natureza nos Últimos Anos 
 
-```{r label = 'base_grafico_11'}
+```{r label = 'base_grafico_15'}
 #| echo = FALSE
 
 ## filtrar a base para a cidade
@@ -1324,8 +1315,8 @@ enem_cn_historico <- enem |>
 ```
 
 
-```{r label = 'gráfico_11'}
-#| fig.cap = "Gráfico 11 - Gráfico de linhas - evolução das notas de Ciências da Natureza",
+```{r label = 'gráfico_16'}
+#| fig.cap = "Gráfico 16 - Gráfico de linhas - evolução das notas de Ciências da Natureza",
 #| fig.height = 10,
 
 p11 <- enem_cn_historico |>
@@ -1346,7 +1337,7 @@ p11 <- enem_cn_historico |>
     vjust = -2,
     size = 5
   ) +
-  theme_enem() +
+  theme_enem_fundo_branco() +
   ggplot2::labs(
     title = "Médias das notas",
     subtitle = "Ciências da Natureza e suas Tecnologias",
@@ -1366,14 +1357,14 @@ p11
 
 # Prova de Ciências Humanas
 
-### Distribuição das notas de Ciências da Natureza
+### Distribuição das Notas de Ciências da Natureza
 
-```{r label = 'gráfico_12'}
+```{r label = 'gráfico_17'}
 #| fig.align = "center",
-#| fig.cap = "Gráfico 12 - BoxPlot e histograma da distribuição de notas de ciências humanas",
+#| fig.cap = "Gráfico 17 - BoxPlot e histograma da distribuição de notas de ciências humanas",
 
-## gráfico_12_1 - boxplot das notas 
-p12_1 <- enem_cidade |>
+## gráfico_17_1 - boxplot das notas 
+p17_1 <- enem_cidade |>
   dplyr::select(nu_nota_ch) |>
   ggplot2::ggplot(ggplot2::aes(x = nu_nota_ch)) +
   ggplot2::geom_boxplot(
@@ -1386,14 +1377,14 @@ p12_1 <- enem_cidade |>
     y = ""
   ) +
   ggplot2::theme_classic() +
-  theme_enem() +
+  theme_enem_fundo_branco() +
   ggplot2::theme(
     axis.ticks.x = ggplot2::element_blank(),
     axis.line.x = ggplot2::element_blank(),
     axis.text.x = ggplot2::element_blank()
   )
 # gráfico do histograma das notas das redações (parte inferior da visualização)
-p12_2 <- enem_cidade |>
+p17_2 <- enem_cidade |>
   dplyr::select(nu_nota_ch) |>
   ggplot2::ggplot(ggplot2::aes(x = nu_nota_ch)) +
   ggplot2::geom_histogram(
@@ -1406,13 +1397,13 @@ p12_2 <- enem_cidade |>
     y = ""
   ) +
   ggplot2::theme_classic() +
-  theme_enem()
+  theme_enem_fundo_branco()
 
 library(patchwork) # uso do pacote patchwork para união dos gráficos
 
 # disposição dos gráficos
-p12 <- p12_1 / p12_2
-p12
+p17 <- p17_1 / p17_2
+p17
 
 ```
 
@@ -1478,12 +1469,12 @@ A maior nota obtida no município de `r params$cidade` de **`r nota_max_ch`** fo
 
 <br>
 
-### Distribuição das notas de Ciências Humanas por intervalo de classes.
+### Distribuição das Notas de Ciências Humanas por Intervalo de Classes.
 
-```{r label = 'grafico_13'}
-#| fig.cap = "Gráfico 13 - Diagrama de colunas das notas de Ciências Humanas por intervalos"
+```{r label = 'grafico_18'}
+#| fig.cap = "Gráfico 18 - Diagrama de colunas das notas de Ciências Humanas por intervalos"
 
-p13 <- tab_classes_notas_ch |>
+p18 <- tab_classes_notas_ch |>
   ggplot2::ggplot() +
   ggplot2::aes(
     x = Var1,
@@ -1509,19 +1500,19 @@ p13 <- tab_classes_notas_ch |>
   ) +
   ggplot2::scale_fill_viridis_d(option = "E") +
   ggplot2::theme(legend.position = "none") +
-  theme_enem()
+  theme_enem_fundo_branco()
 
-p13
+p18
 
 ```
 
 <br>
 
-No gráfico 13, pode-se visualizar como as notas desta área de conhecimento se distribuíram por intervalos de notas. Perceba que **`r round(sum(maiores_classes_notas_ch["Freq"]),3)`%** dos participante(s), ou seja, **`r format((sum(maiores_classes_notas_ch["Freq"]) * total_alunos_municipio)/100, scientific = FALSE)`** aluno(s) obtiveram notas nos intervalos **`r maiores_classes_notas_ch[["Var1"]][2]`** e **`r maiores_classes_notas_ch[["Var1"]][1]`**. Com relação às menores notas, tem-se que  **`r round(menores_classes_notas_ch["Freq"],3)`%** ou **`r (menores_classes_notas_ch["Freq"] * total_alunos_municipio)/100`** aluno(s) obtiveram notas no intervalo de **`r menores_classes_notas_ch[["Var1"]]`**.
+No gráfico 18, pode-se visualizar como as notas desta área de conhecimento se distribuíram por intervalos de notas. Perceba que **`r round(sum(maiores_classes_notas_ch["Freq"]),3)`%** dos participante(s), ou seja, **`r format((sum(maiores_classes_notas_ch["Freq"]) * total_alunos_municipio)/100, scientific = FALSE)`** aluno(s) obtiveram notas nos intervalos **`r maiores_classes_notas_ch[["Var1"]][2]`** e **`r maiores_classes_notas_ch[["Var1"]][1]`**. Com relação às menores notas, tem-se que  **`r round(menores_classes_notas_ch["Freq"],3)`%** ou **`r (menores_classes_notas_ch["Freq"] * total_alunos_municipio)/100`** aluno(s) obtiveram notas no intervalo de **`r menores_classes_notas_ch[["Var1"]]`**.
 
 <br>
 
-### Médias das notas por dependência administrativa
+## Médias das Notas por Dependência Administrativa
 
 ```{r label = 'base_grafico_medias_dep_adm_ciencias_humanas'}
 #| fig.cap = "Média por tipo de dependência administrativa",
@@ -1536,10 +1527,10 @@ notas_tipo_escola_ch <- enem_cidade |>
 
 ```
 
-```{r label = 'gráfico_14_medias_dependencia_adm_ciencias_humanas'}
+```{r label = 'gráfico_19_medias_dependencia_adm_ciencias_humanas'}
 #| fig.align = "center"
 
-p14 <- notas_tipo_escola_ch |>
+p19 <- notas_tipo_escola_ch |>
   ggplot2::ggplot() +
   ggplot2::aes(
     x = forcats::fct_reorder(
@@ -1572,17 +1563,17 @@ p14 <- notas_tipo_escola_ch |>
     limits = c(0, 700),
     breaks = seq(0, 700, 100)
   ) +
-  theme_enem()
+  theme_enem_fundo_branco()
 
-p14
+p19
 
 ```
 
 <br> 
 
-### Evolução das notas de Ciências Humanas nos últimos anos 
+### Evolução das Notas de Ciências Humanas nos Últimos Anos 
 
-```{r label = 'base_grafico_15'}
+```{r label = 'base_grafico_20'}
 #| echo = FALSE
 
 ## filtrar a base para a cidade
@@ -1595,11 +1586,11 @@ enem_ch_historico <- enem |>
 ```
 
 
-```{r label = 'gráfico_15'}
-#| fig.cap = "Gráfico 15 - Gráfico de linhas - evolução das notas de CH",
+```{r label = 'gráfico_20'}
+#| fig.cap = "Gráfico 20 - Gráfico de linhas - evolução das notas de CH",
 #| fig.height = 10,
 
-p15 <- enem_ch_historico |>
+p20 <- enem_ch_historico |>
   ggplot2::ggplot() +
   ggplot2::aes(
     x = nu_ano,
@@ -1617,7 +1608,7 @@ p15 <- enem_ch_historico |>
     vjust = -2,
     size = 5
   ) +
-  theme_enem() +
+  theme_enem_fundo_branco() +
   ggplot2::labs(
     title = "Médias das notas",
     subtitle = "Ciências Humanas e suas Tecnologias",
@@ -1629,6 +1620,284 @@ p15 <- enem_ch_historico |>
     max(enem_ch_historico$media) + 50
   ))
 
-p15
+p20
 
 ```
+
+# Prova de Matemática
+
+### Distribuição das Notas de Matemática
+
+```{r label = 'gráfico_21'}
+#| fig.align = "center",
+#| fig.cap = "Gráfico 20 - BoxPlot e histograma da distribuição de notas de Matemática",
+## gráfico_17_1 - boxplot das notas 
+p21_1 <- enem_cidade |>
+  dplyr::select(nu_nota_mt) |>
+  ggplot2::ggplot(ggplot2::aes(x = nu_nota_mt)) +
+  ggplot2::geom_boxplot(
+    fill = "#11B5E4",
+    alpha = 0.7
+  ) +
+  ggplot2::labs(
+    title = "Distribuição das notas de Matemática ",
+    x = "",
+    y = ""
+  ) +
+  ggplot2::theme_classic() +
+  theme_enem_fundo_branco() +
+  ggplot2::theme(
+    axis.ticks.x = ggplot2::element_blank(),
+    axis.line.x = ggplot2::element_blank(),
+    axis.text.x = ggplot2::element_blank()
+  )
+# gráfico do histograma das notas de matemática (parte inferior da visualização)
+p21_2 <- enem_cidade |>
+  dplyr::select(nu_nota_mt) |>
+  ggplot2::ggplot(ggplot2::aes(x = nu_nota_mt)) +
+  ggplot2::geom_histogram(
+    fill = "#11B5E4",
+    color = "#000000",
+    alpha = 0.7
+  ) +
+  ggplot2::labs(
+    x = "Notas",
+    y = ""
+  ) +
+  ggplot2::theme_classic() +
+  theme_enem_fundo_branco()
+
+library(patchwork) # uso do pacote patchwork para união dos gráficos
+
+# disposição dos gráficos
+p21 <- p21_1 / p21_2
+p21
+
+```
+
+
+```{r label = 'notas_máximas_mt'}
+#| echo = FALSE
+
+nota_max_mt <- enem_cidade |>
+  dplyr::summarize(nota_max = max(nu_nota_mt))
+
+nota_min_mt <- enem_cidade |>
+  dplyr::summarise(nota_min = min(nu_nota_mt))
+
+nota_media_mt <- enem_cidade |>
+  dplyr::summarise(nota_media_mt = mean(nu_nota_mt, na.rm = TRUE))
+
+```
+
+```{r label = 'base_grafico_freq_relativa_intervalo_de_classes_mt'}
+#| echo = FALSE,
+#| fig.align = "center"
+
+fabs_notas_mt <- enem_cidade |>
+  dplyr::select(nu_nota_mt) |>
+  table()
+
+# total de alunos com nota máxima
+
+qtd_nota_max_mt <- fabs_notas_mt |>
+  tail(n = 1)
+
+# criar as classes de frequências das notas
+
+intervalo_classes_notas_mt <- seq(0, 1000, 100)
+
+tab_classes_notas_mt <- table(
+  cut(enem_cidade$nu_nota_mt,
+    breaks = intervalo_classes_notas_mt,
+    right = FALSE
+  )
+) |>
+  prop.table() |>
+  data.frame() |>
+  dplyr::mutate(Freq = Freq * 100)
+
+maiores_classes_notas_mt <- tab_classes_notas_mt |>
+  dplyr::arrange(desc(Freq)) |>
+  dplyr::slice_max(order_by = Freq, n = 2) |>
+  tibble::tibble()
+
+
+menores_classes_notas_mt <- tab_classes_notas_mt |>
+  dplyr::arrange(desc(Var1)) |>
+  dplyr::filter(Freq != 0) |>
+  dplyr::slice_tail() |>
+  tibble::tibble()
+
+```
+<br>
+
+A maior nota obtida no município de `r params$cidade` de **`r nota_max_mt`** foi obtida por **`r qtd_nota_max_mt`** aluno(s) e a nota média foi de **`r round(nota_media_mt,2)`**.
+
+<br>
+
+### Distribuição das Notas de Matemática por Intervalo de Classes.
+
+```{r label = 'grafico_22'}
+#| fig.cap = "Gráfico 22 - Diagrama de colunas das notas de Matemática por intervalos"
+
+p22 <- tab_classes_notas_mt |>
+  ggplot2::ggplot() +
+  ggplot2::aes(
+    x = Var1,
+    y = Freq,
+    fill = Var1,
+    label = round(Freq, 3)
+  ) +
+  ggplot2::geom_col(
+    color = "#000000",
+    alpha = 0.7
+  ) +
+  ggplot2::geom_label( # labels
+    size = 5,
+    color = "#000000",
+    alpha = 0,
+    nudge_y = 1.5
+  ) +
+  ggplot2::labs( # títulos dos eixos
+    title = "Frequência relativa por intervalo de classes",
+    subtitle = "Matemática e suas Tecnologias",
+    x = "Intervalo de notas",
+    y = "Frequência (%)"
+  ) +
+  ggplot2::scale_fill_viridis_d(option = "E") +
+  ggplot2::theme(legend.position = "none") +
+  theme_enem_fundo_branco()
+
+p22
+
+```
+
+<br>
+
+No gráfico 21, pode-se visualizar como as notas desta área de conhecimento se distribuíram por intervalos de notas. Perceba que **`r round(sum(maiores_classes_notas_mt["Freq"]),3)`%** dos participante(s), ou seja, **`r format((sum(maiores_classes_notas_mt["Freq"]) * total_alunos_municipio)/100, scientific = FALSE)`** aluno(s) obtiveram notas nos intervalos **`r maiores_classes_notas_ch[["Var1"]][2]`** e **`r maiores_classes_notas_mt[["Var1"]][1]`**. Com relação às menores notas, tem-se que  **`r round(menores_classes_notas_mt["Freq"],3)`%** ou **`r (menores_classes_notas_mt["Freq"] * total_alunos_municipio)/100`** aluno(s) obtiveram notas no intervalo de **`r menores_classes_notas_mt[["Var1"]]`**.
+
+<br>
+
+## Médias das Notas por Dependência Administrativa
+
+```{r label = 'base_grafico_medias_dep_adm_matematica'}
+#| fig.cap = "Média por tipo de dependência administrativa",
+#| echo = FALSE
+
+notas_tipo_escola_mt <- enem_cidade |>
+  dplyr::select(tp_dependencia_adm_esc, nu_nota_mt) |>
+  tidyr::drop_na() |>
+  dplyr::group_by(tp_dependencia_adm_esc) |>
+  dplyr::summarise(medias = mean(nu_nota_mt, na.rm = TRUE)) |>
+  dplyr::arrange(desc(medias))
+
+```
+
+```{r label = 'gráfico_23_medias_dependencia_adm_matematica'}
+#| fig.align = "center"
+
+p23 <- notas_tipo_escola_mt |>
+  ggplot2::ggplot() +
+  ggplot2::aes(
+    x = forcats::fct_reorder(
+      tp_dependencia_adm_esc,
+      medias,
+      .desc = TRUE
+    ),
+    y = medias,
+    fill = tp_dependencia_adm_esc,
+    label = round(medias, 2)
+  ) +
+  ggplot2::geom_col(
+    color = "#000000",
+    alpha = 0.7
+  ) +
+  ggplot2::geom_label(
+    size = 5,
+    color = "#000000",
+    alpha = 0,
+    vjust = -0.5
+  ) +
+  ggplot2::labs(
+    title = "Média das escolas por dependência administrativa",
+    subtitle = "Matemática e suas Tecnologias",
+    x = "Dependência administrativa",
+    y = "Média"
+  ) +
+  ggplot2::theme(legend.position = "none") +
+  ggplot2::scale_y_continuous(
+    limits = c(0, 700),
+    breaks = seq(0, 700, 100)
+  ) +
+  theme_enem_fundo_branco()
+
+p23
+
+```
+
+<br> 
+
+### Evolução das Notas de Matemática nos Últimos Anos 
+
+```{r label = 'base_grafico_24'}
+#| echo = FALSE
+
+## filtrar a base para a cidade
+enem_mt_historico <- enem |>
+  dplyr::filter(no_municipio_prova == params$cidade) |>
+  dplyr::select(nu_nota_mt, nu_ano) |>
+  dplyr::group_by(nu_ano) |>
+  dplyr::summarise(media = mean(nu_nota_mt, na.rm = TRUE))
+
+```
+
+
+```{r label = 'gráfico_24'}
+#| fig.cap = "Gráfico 24 - Gráfico de linhas - evolução das notas de MT",
+#| fig.height = 10,
+
+p24 <- enem_mt_historico |>
+  ggplot2::ggplot() +
+  ggplot2::aes(
+    x = nu_ano,
+    y = media,
+    label = round(media, 2)
+  ) +
+  ggplot2::geom_line(color = "grey") +
+  ggplot2::geom_point(
+    shape = 21,
+    color = "black",
+    fill = "#70A288",
+    size = 8
+  ) +
+  ggplot2::geom_text(
+    vjust = -2,
+    size = 5
+  ) +
+  theme_enem_fundo_branco() +
+  ggplot2::labs(
+    title = "Médias das notas",
+    subtitle = "Matemática e suas Tecnologias",
+    x = "Ano",
+    y = "Média"
+  ) +
+  ggplot2::scale_y_continuous(limits = c(
+    min(enem_mt_historico$media) - 50,
+    max(enem_mt_historico$media) + 50
+  ))
+
+p24
+
+```
+
+<br>
+
+# Conclusão
+
+Neste trabalho, foi criado um modelo de relatório que permite a produção de documentos para os oitenta e oito municípios paranaenses, nos quais os exame do ENEM foi realizado. 
+
+Esta ferramenta permite visualizar informações geradas a partir dos microdados do ENEM que refletem o desempenho dos candidatos por área de conhecimento. 
+
+Com os dados por município pode-se ter uma visão geral das áreas com melhor e pior desempenho. A análise das médias das notas do exame permite à administração pública a implementação de programas, em suas respectivas localidades, de melhorias que possibilitem a todas as escolas, sejam públicas ou privadas, federal, estadual ou municipal a obtenção de um ensino com o mesmo padrão, reduzindo a diferença nos desempenhos que podem ser observados nos relatórios gerados por este instrumento.
+

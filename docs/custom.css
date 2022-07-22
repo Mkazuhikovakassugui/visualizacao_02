@@ -3,14 +3,15 @@ body{                                                         /*Especificação 
     background-color: #FFFFFF;
 }
 
-h1{                                         /*Especificação dos títulos */
-    color: white;
+h1, h2, h3{                                         /*Especificação dos títulos */
+    color: black;
     text-align: left;
-    text-shadow: 1px 1px 0px black, 0 0 50px lightblue, 0 0 7px green;
+    text-shadow: 1px 1px 0px black, 0 0 10px black, 0 0 1px black;
 }
 
-h2, h3, h4, h5, h6 {                                         /*Especificação dos títulos */
-    color: #145C9E;
+
+h4, h5, h6 {                                         /*Especificação dos títulos */
+    color: #000000;
     text-align: left;
 }
 
